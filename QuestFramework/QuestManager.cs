@@ -1,4 +1,5 @@
 ﻿using Netcode;
+using Newtonsoft.Json;
 using QuestFramework.API;
 using StardewValley;
 
@@ -34,7 +35,12 @@ namespace QuestFramework
                 .AddField(_quests, "quests");
         }
 
-        public void LoadState(QuestManagerState managerState)
+        public void LoadState(QuestManagerState managerState, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal QuestManagerState SaveState(JsonSerializer serializer)
         {
             throw new NotImplementedException();
         }

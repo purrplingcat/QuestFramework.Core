@@ -1,4 +1,5 @@
-﻿using StardewModdingAPI;
+﻿using Newtonsoft.Json;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 
@@ -6,7 +7,8 @@ namespace QuestFramework
 {
     public class QuestFrameworkMod : Mod
     {
-        private const string QF_MSG_SYNC = "QuestFramework_Sync";
+        private const string MSG_SYNC = "SYNC_QUESTS";
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new();
 
         public override void Entry(IModHelper helper)
         {
@@ -14,12 +16,29 @@ namespace QuestFramework
             helper.Events.Multiplayer.ModMessageReceived += OnMultiplayerMessageReceived;
             helper.Events.GameLoop.UpdateTicked += OnGameUpdated;
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
+            helper.Events.GameLoop.Saving += OnSaving;
+        }
+
+        private void OnSaving(object? sender, SavingEventArgs e)
+        {
+            if (!Context.IsMainPlayer) { return; }
+
+            var serializer = JsonSerializer.Create(_jsonSerializerSettings);
+            var save = new QuestFrameworkState
+            {
+                Version = ModManifest.Version,
+                Quests = QuestManager.Managers
+                .ToDictionary((m) => m.Key, (m) => m.Value.SaveState(serializer))
+            };
+
+            Helper.Data.WriteSaveData("Quests", save);
         }
 
         private void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
         {
             if (!Context.IsMainPlayer) { return; }
 
+            var serializer = JsonSerializer.Create(_jsonSerializerSettings);
             QuestFrameworkState save = Helper.Data.ReadSaveData<QuestFrameworkState>("Quests") ?? new();
 
             foreach(var farmer in Game1.getAllFarmers())
@@ -28,7 +47,7 @@ namespace QuestFramework
 
                 if (save.Quests.TryGetValue(farmer.UniqueMultiplayerID,out var managerState))
                 {
-                    manager.LoadState(managerState);
+                    manager.LoadState(managerState, serializer);
                 }
 
                 QuestManager.Managers.Add(farmer.UniqueMultiplayerID, manager);
@@ -38,6 +57,15 @@ namespace QuestFramework
         private void OnPeerConnected(object? sender, PeerConnectedEventArgs e)
         {
             if (!Context.IsMainPlayer) { return; }
+           
+            var mod = e.Peer.GetMod(Helper.Multiplayer.ModID);
+
+            if (mod == null || !mod.Version.Equals(ModManifest.Version))
+            {
+                Game1.server.kick(e.Peer.PlayerID);
+                Monitor.Log($"Mismatch Quest Framework version for peer ${e.Peer.PlayerID}: {mod?.Version} != {ModManifest.Version}", LogLevel.Error);
+                return;
+            }
 
             Farmer farmer = Game1.getFarmer(e.Peer.PlayerID); 
             if (farmer == null) return;
@@ -57,13 +85,13 @@ namespace QuestFramework
                     Type = QuestSyncMessage.SyncType.FULL 
                 };
 
-                Helper.Multiplayer.SendMessage(msg, QF_MSG_SYNC, toMods, toPlayers);
+                Helper.Multiplayer.SendMessage(msg, MSG_SYNC, toMods, toPlayers);
             }
         }
 
         private void OnMultiplayerMessageReceived(object? sender, ModMessageReceivedEventArgs e)
         {
-            if (e.Type == QF_MSG_SYNC)
+            if (e.Type == MSG_SYNC && e.FromModID == Helper.Multiplayer.ModID && e.FromPlayerID != Game1.player.UniqueMultiplayerID)
             {
                 var msg = e.ReadAs<QuestSyncMessage>();
                 
@@ -93,7 +121,7 @@ namespace QuestFramework
                     if (manager.Value.Dirty)
                     {
                         var msg = new QuestSyncMessage(Game1.Multiplayer.writeObjectDeltaBytes(manager.Value), manager.Key);
-                        Helper.Multiplayer.SendMessage(msg, QF_MSG_SYNC, toMods);
+                        Helper.Multiplayer.SendMessage(msg, MSG_SYNC, toMods);
                         manager.Value.MarkClean();
                     }
                     Game1.Multiplayer.updateRoot(manager.Value);
