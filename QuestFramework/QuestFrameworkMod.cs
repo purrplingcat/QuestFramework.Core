@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Netcode;
+using Newtonsoft.Json;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -136,20 +137,23 @@ namespace QuestFramework
 
         private void OnGameUpdated(object? sender, UpdateTickedEventArgs e)
         {
-            if (e.IsMultipleOf(10))
-            {
-                var toMods = new string[] { ModManifest.UniqueID };
+            if (!Context.IsWorldReady) { return; }
 
-                foreach (var manager in QuestManager.Managers.Roots)
+            foreach (var manager in QuestManager.Managers.Roots)
+            {
+                Game1.Multiplayer.updateRoot(manager.Value);
+
+                if (Context.IsMainPlayer && e.IsMultipleOf(5))
                 {
-                    if (manager.Value.Dirty)
-                    {
-                        var msg = new QuestSyncMessage(Game1.Multiplayer.writeObjectDeltaBytes(manager.Value), manager.Key);
-                        Helper.Multiplayer.SendMessage(msg, MSG_SYNC, toMods);
-                        manager.Value.MarkClean();
-                        Monitor.Log($"(SYNC) Sent delta update for Quest Manager playerID: {msg.FarmerID}");
-                    }
-                    Game1.Multiplayer.updateRoot(manager.Value);
+                    SendQuestDelta(manager.Value, manager.Key);
+                }
+            }
+
+            if (!Context.IsMainPlayer && e.IsMultipleOf(5))
+            {
+                if (QuestManager.Managers.Roots.TryGetValue(Game1.player.UniqueMultiplayerID, out var localManager))
+                {
+                    SendQuestDelta(localManager, Game1.player.UniqueMultiplayerID);
                 }
             }
         }
@@ -166,6 +170,17 @@ namespace QuestFramework
 
             QuestManager.Managers.Clear();
             Monitor.Log("Quest Managers were uninitialized", LogLevel.Info);
+        }
+
+        private void SendQuestDelta(NetRoot<QuestManager> manager_root, long playerId)
+        {
+            if (Context.IsMultiplayer && manager_root.Dirty)
+            {
+                var msg = new QuestSyncMessage(Game1.Multiplayer.writeObjectDeltaBytes(manager_root), playerId);
+                Helper.Multiplayer.SendMessage(msg, MSG_SYNC, new string[] { ModManifest.UniqueID });
+                manager_root.MarkClean();
+                Monitor.Log($"(SYNC) Sent delta update for Quest Manager playerID: {msg.FarmerID}");
+            }
         }
     }
 }
