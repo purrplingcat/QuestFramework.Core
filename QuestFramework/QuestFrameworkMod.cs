@@ -1,5 +1,7 @@
 ﻿using Netcode;
 using Newtonsoft.Json;
+using QuestFramework.Extensions;
+using QuestFramework.Quests;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -21,6 +23,15 @@ namespace QuestFramework
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
             helper.Events.GameLoop.Saving += OnSaving;
             helper.Events.GameLoop.ReturnedToTitle += OnExitToTitle;
+            helper.Events.Input.ButtonPressed += Input_ButtonPressed;
+        }
+
+        private void Input_ButtonPressed(object? sender, ButtonPressedEventArgs e)
+        {
+            if (Context.IsWorldReady && e.Button == SButton.F5)
+            {
+                Game1.player.GetQuestManager().Quests.Add(QuestManager.CreateQuest("test"));
+            }
         }
 
         private void OnSaving(object? sender, SavingEventArgs e)
