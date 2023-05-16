@@ -56,7 +56,8 @@ namespace QuestFramework.Quests
 
         public override bool IsAccepted()
         {
-            throw new NotImplementedException();
+            // TODO: For testing purposes, dehardcode later
+            return true;
         }
 
         public override bool IsHidden()
@@ -101,7 +102,7 @@ namespace QuestFramework.Quests
 
         public override void Update()
         {
-            throw new NotImplementedException();
+            // TODO: Implement later
         }
     }
 }

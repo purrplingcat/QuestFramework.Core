@@ -27,17 +27,18 @@ namespace QuestFramework.Framework
             {
                 Version = _manifest.Version,
                 Managers = QuestManager.Managers
-                .ToDictionary((m) => m.Key, (m) => m.Value.SaveState(serializer))
+                .ToDictionary((m) => m.Key, (m) => m.Value.GetSaveState())
             };
 
             _data.WriteSaveData(SAVE_KEY, save);
+            Game1.CustomData.Any();
             Logger.Info($"State successfully saved for {save.Managers.Count} managers");
         }
 
         public void LoadState()
         {
-            var serializer = JsonSerializer.Create(_jsonSerializerSettings);
             QuestFrameworkState save = _data.ReadSaveData<QuestFrameworkState>(SAVE_KEY) ?? new();
+            QuestManager.Managers.Clear();
 
             foreach (var farmer in Game1.getAllFarmers())
             {
@@ -45,7 +46,7 @@ namespace QuestFramework.Framework
 
                 if (save.Managers.TryGetValue(farmer.UniqueMultiplayerID, out var managerState))
                 {
-                    manager.LoadState(managerState, serializer);
+                    manager.LoadFromState(managerState);
                 }
 
                 QuestManager.Managers.Add(farmer.UniqueMultiplayerID, manager);

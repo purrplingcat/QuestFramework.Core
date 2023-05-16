@@ -39,9 +39,21 @@ namespace QuestFramework
         // TODO: Only for test purposes. Remove it when it's not needed anymore
         private void Input_ButtonPressed(object? sender, ButtonPressedEventArgs e)
         {
-            if (Context.IsWorldReady && e.Button == SButton.F5)
+            if (!Context.IsWorldReady) { return; }
+            
+            if (e.Button == SButton.F5)
             {
                 Game1.player.GetQuestManager().AddQuest("test");
+            }
+
+            if (e.Button == SButton.F6)
+            {
+                SaveManager.SaveState();
+            }
+
+            if (e.Button == SButton.F8)
+            {
+                SaveManager.LoadState();
             }
         }
 

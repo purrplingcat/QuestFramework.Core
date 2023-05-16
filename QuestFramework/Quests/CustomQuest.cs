@@ -1,26 +1,31 @@
 ﻿using Netcode;
+using Newtonsoft.Json;
 using QuestFramework.API;
 
 namespace QuestFramework.Quests
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public abstract class CustomQuest : ICustomQuest
     {
         protected readonly NetString id = new();
         protected readonly NetString questKey = new("");
         protected readonly NetString typeDefinitionId = new("");
 
+        [JsonProperty]
         public string Id
         {
             get => id.Value;
             set => id.Value = value;
         }
 
+        [JsonProperty]
         public string QuestKey 
         { 
             get => questKey.Value; 
             set => questKey.Value = value; 
         }
 
+        [JsonProperty]
         public string TypeDefinitionId 
         { 
             get => typeDefinitionId.Value;

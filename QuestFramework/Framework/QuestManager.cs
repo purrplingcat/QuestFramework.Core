@@ -70,7 +70,7 @@ namespace QuestFramework.Framework
             {
                 foreach (var quest in before)
                 {
-                    if (after.Contains(quest)) { continue; }
+                    if (quest == null || after.Contains(quest)) { continue; }
                     quest.OnRemoved();
                 }
             }
@@ -86,6 +86,8 @@ namespace QuestFramework.Framework
 
         private void HookOnQuest(ICustomQuest quest)
         {
+            if (quest == null) { return; }
+
             if (quest.Manager != this)
             {
                 if (quest.Manager != null)
@@ -96,7 +98,7 @@ namespace QuestFramework.Framework
                 quest.OnAdd(this);
             }
 
-            if (quest.IsAccepted())
+            if (!quest.IsAccepted())
             {
                 quest.OnAccept();
             }
@@ -133,14 +135,18 @@ namespace QuestFramework.Framework
             Quests.Add(quest);
         }
 
-        public void LoadState(QuestManagerState managerState, JsonSerializer serializer)
+        public void LoadFromState(QuestManagerState managerState)
         {
-            throw new NotImplementedException();
+            _quests.Clear();
+            _quests.Set(managerState.Quests);
         }
 
-        public QuestManagerState SaveState(JsonSerializer serializer)
+        public QuestManagerState GetSaveState()
         {
-            throw new NotImplementedException();
+            return new QuestManagerState()
+            {
+                Quests = new List<ICustomQuest>(Quests),
+            };
         }
 
         public static ICustomQuest? CreateQuest(string questId, int? seed = null)
