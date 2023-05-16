@@ -1,4 +1,4 @@
-﻿namespace QuestFramework
+﻿namespace QuestFramework.Networking
 {
     internal class QuestSyncMessage
     {

@@ -1,8 +1,8 @@
 ﻿using StardewModdingAPI;
 
-namespace QuestFramework
+namespace QuestFramework.Model
 {
-    public class QuestFrameworkState
+    internal class QuestFrameworkState
     {
         public ISemanticVersion? Version { get; set; }
         public Dictionary<long, QuestManagerState> Quests { get; set; } = new();

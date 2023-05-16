@@ -1,15 +1,33 @@
 ﻿using Netcode;
 using QuestFramework.API;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuestFramework.Quests
 {
-    public class CustomQuest : ICustomQuest
+    public abstract class CustomQuest : ICustomQuest
     {
+        protected readonly NetString id = new();
+        protected readonly NetString questKey = new("");
+        protected readonly NetString typeDefinitionId = new("");
+
+        public string Id
+        {
+            get => id.Value;
+            set => id.Value = value;
+        }
+
+        public string QuestKey 
+        { 
+            get => questKey.Value; 
+            set => questKey.Value = value; 
+        }
+
+        public string TypeDefinitionId 
+        { 
+            get => typeDefinitionId.Value;
+            set => typeDefinitionId.Value = value;
+        }
+
+        public IQuestManager? Manager { get; private set; }
         public NetFields NetFields { get; }
 
         public CustomQuest() 
@@ -18,84 +36,49 @@ namespace QuestFramework.Quests
             InitNetFields(NetFields);
         }
 
+        public CustomQuest(string id, string questKey = "", string typeDefinitionId = "") : this()
+        {
+            Id = id;
+            TypeDefinitionId = typeDefinitionId;
+            QuestKey = questKey;
+        }
+
         protected void InitNetFields(NetFields netFields)
         {
-            netFields.SetOwner(this);
+            netFields.SetOwner(this)
+                .AddField(id, "id")
+                .AddField(questKey, "questKey")
+                .AddField(typeDefinitionId, "typeDefinitionId");
         }
 
-        public bool CanBeCancelled()
+        public abstract string GetName();
+        public abstract bool IsAccepted();
+        public abstract string GetDescription();
+        public abstract List<string> GetObjectiveDescriptions();
+        public abstract bool CanBeCancelled();
+        public abstract void MarkAsViewed();
+        public abstract bool ShouldDisplayAsNew();
+        public abstract bool ShouldDisplayAsComplete();
+        public abstract bool IsTimedQuest();
+        public abstract int GetDaysLeft();
+        public abstract bool IsHidden();
+        public abstract bool HasReward();
+        public abstract bool HasMoneyReward();
+        public abstract int GetMoneyReward();
+        public abstract void OnMoneyRewardClaimed();
+        public abstract bool OnLeaveQuestPage();
+        public abstract void OnAccept();
+        
+        public abstract void Update();
+
+        public virtual void OnAdd(IQuestManager manager)
         {
-            throw new NotImplementedException();
+            Manager = manager;
         }
 
-        public int GetDaysLeft()
+        public virtual void OnRemoved()
         {
-            throw new NotImplementedException();
-        }
-
-        public string GetDescription()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int GetMoneyReward()
-        {
-            throw new NotImplementedException();
-        }
-
-        public string GetName()
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<string> GetObjectiveDescriptions()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool HasMoneyReward()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool HasReward()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsHidden()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsTimedQuest()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void MarkAsViewed()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool OnLeaveQuestPage()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnMoneyRewardClaimed()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool ShouldDisplayAsComplete()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool ShouldDisplayAsNew()
-        {
-            throw new NotImplementedException();
+            Manager = null;
         }
     }
 }

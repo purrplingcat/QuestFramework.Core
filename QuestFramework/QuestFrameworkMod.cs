@@ -1,10 +1,12 @@
 ﻿using Netcode;
 using Newtonsoft.Json;
+using QuestFramework.Model;
 using QuestFramework.Extensions;
-using QuestFramework.Quests;
+using QuestFramework.Networking;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using QuestFramework.Framework;
 
 namespace QuestFramework
 {
@@ -15,10 +17,17 @@ namespace QuestFramework
 
         private readonly JsonSerializerSettings _jsonSerializerSettings = new();
 
+        public static QuestFrameworkConfig Config { get; private set; } = new();
+
         public override void Entry(IModHelper helper)
         {
+            Logger.Setup(Monitor);
+
+            Config = helper.ReadConfig<QuestFrameworkConfig>();
+
             helper.Events.Multiplayer.PeerConnected += OnPeerConnected;
             helper.Events.Multiplayer.ModMessageReceived += OnMultiplayerMessageReceived;
+            helper.Events.GameLoop.UpdateTicking += OnGameUpdating;
             helper.Events.GameLoop.UpdateTicked += OnGameUpdated;
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
             helper.Events.GameLoop.Saving += OnSaving;
@@ -26,11 +35,21 @@ namespace QuestFramework
             helper.Events.Input.ButtonPressed += Input_ButtonPressed;
         }
 
+        private void OnGameUpdating(object? sender, UpdateTickingEventArgs e)
+        {
+            if (!Context.IsWorldReady) { return; }
+
+            if (e.IsMultipleOf(Config.UpdateRate))
+            {
+                QuestManager.Current?.Update();
+            }
+        }
+
         private void Input_ButtonPressed(object? sender, ButtonPressedEventArgs e)
         {
             if (Context.IsWorldReady && e.Button == SButton.F5)
             {
-                Game1.player.GetQuestManager().Quests.Add(QuestManager.CreateQuest("test"));
+                Game1.player.GetQuestManager().AddQuest("test");
             }
         }
 
