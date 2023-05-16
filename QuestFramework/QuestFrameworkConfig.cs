@@ -2,6 +2,7 @@
 {
     public class QuestFrameworkConfig
     {
-        public uint UpdateRate { get; set; }
+        public uint UpdateRate { get; set; } = 1;
+        public uint DeltaBroadcastPeriod { get; set; } = 5;
     }
 }
