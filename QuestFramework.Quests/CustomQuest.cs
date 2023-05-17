@@ -4,7 +4,6 @@ using QuestFramework.API;
 
 namespace QuestFramework.Quests
 {
-    [JsonObject(MemberSerialization.OptIn)]
     public abstract class CustomQuest : ICustomQuest
     {
         protected readonly NetString id = new();
@@ -34,6 +33,8 @@ namespace QuestFramework.Quests
 
         [JsonIgnore]
         public IQuestManager? Manager { get; private set; }
+
+        [JsonIgnore]
         public NetFields NetFields { get; }
 
         public CustomQuest() 
@@ -49,7 +50,7 @@ namespace QuestFramework.Quests
             QuestKey = questKey;
         }
 
-        protected void InitNetFields(NetFields netFields)
+        protected virtual void InitNetFields(NetFields netFields)
         {
             netFields.SetOwner(this)
                 .AddField(id, "id")

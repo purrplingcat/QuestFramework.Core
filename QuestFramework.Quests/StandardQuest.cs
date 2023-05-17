@@ -1,16 +1,31 @@
-﻿using QuestFramework.API;
+﻿using Netcode;
+using Newtonsoft.Json;
+using QuestFramework.API;
 using QuestFramework.API.Attributes;
+using QuestFramework.Quests.Objectives;
 
 namespace QuestFramework.Quests
 {
     [CustomQuest("quest")]
     public class StandardQuest : CustomQuest, IHaveObjectives
     {
+        protected NetObjectList<QuestObjective> objectives = new();
+
+        [JsonProperty("Objectives")]
+        public IList<QuestObjective> Objectives => objectives;
+
         public StandardQuest() { }
 
         public StandardQuest(string questId, string questKey = "", string typeDefinitionId = "") : base(questId, questKey, typeDefinitionId)
         {
             Reload();
+        }
+
+        protected override void InitNetFields(NetFields netFields)
+        {
+            base.InitNetFields(netFields);
+
+            netFields.AddField(objectives, "objectives");
         }
 
         public override bool CanBeCancelled()
