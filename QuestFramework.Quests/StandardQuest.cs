@@ -1,6 +1,10 @@
-﻿namespace QuestFramework.Quests
+﻿using QuestFramework.API;
+using QuestFramework.API.Attributes;
+
+namespace QuestFramework.Quests
 {
-    public class StandardQuest : CustomQuest
+    [CustomQuest("quest")]
+    public class StandardQuest : CustomQuest, IHaveObjectives
     {
         public StandardQuest() { }
 
@@ -35,6 +39,11 @@
         }
 
         public override List<string> GetObjectiveDescriptions()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<IQuestObjective> GetObjectives()
         {
             throw new NotImplementedException();
         }

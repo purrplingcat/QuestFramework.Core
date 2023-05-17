@@ -1,7 +1,8 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using QuestFramework.API;
-using QuestFramework.Quests;
+using QuestFramework.API.Attributes;
+using System.Reflection;
 
 namespace QuestFramework.Framework.Converters
 {
@@ -10,11 +11,6 @@ namespace QuestFramework.Framework.Converters
         private const string TYPE_KEY = "@type";
 
         private static readonly Dictionary<string, Type> _knownTypes = new();
-        
-        static CustomQuestConverter() 
-        {
-            RegisterType(typeof(StandardQuest), "quest");
-        }
 
         public override ICustomQuest? ReadJson(JsonReader reader, Type objectType, ICustomQuest? existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
@@ -60,7 +56,16 @@ namespace QuestFramework.Framework.Converters
 
         public static void RegisterType(Type type, string? name = null)
         {
-            _knownTypes[name ?? type.Name] = type;
+            var ifaceType = typeof(ICustomQuest);
+            name ??= type.GetCustomAttribute<CustomQuestAttribute>()?.Name ?? type.Name;
+
+            if (!ifaceType.IsAssignableFrom(type))
+            {
+                throw new Exception($"Unable to register quest type '{name}': Type {type.FullName} doesn't implement {ifaceType.FullName}");
+            }
+
+            _knownTypes[name] = type;
+            Logger.Debug($"Registered custom quest type '{name}' ({type.FullName})");
         }
     }
 }

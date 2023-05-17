@@ -32,6 +32,7 @@ namespace QuestFramework.Quests
             set => typeDefinitionId.Value = value;
         }
 
+        [JsonIgnore]
         public IQuestManager? Manager { get; private set; }
         public NetFields NetFields { get; }
 

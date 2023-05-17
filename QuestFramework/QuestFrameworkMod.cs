@@ -6,6 +6,10 @@ using StardewValley;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using QuestFramework.API.Attributes;
+using QuestFramework.Framework.Converters;
+using QuestFramework.Quests;
 
 namespace QuestFramework
 {
@@ -24,6 +28,8 @@ namespace QuestFramework
         public override void Entry(IModHelper helper)
         {
             Logger.Setup(Monitor);
+            RegisterTypesFrom(typeof(CustomQuest).Assembly);
+            RegisterTypesFrom(GetType().Assembly);
 
             Config = helper.ReadConfig<QuestFrameworkConfig>();
             Synchronizer = new QuestSynchronizer(helper.Events, helper.Multiplayer, helper.Translation, ModManifest);
@@ -93,6 +99,19 @@ namespace QuestFramework
 
             QuestManager.Managers.Clear();
             Monitor.Log("Quest Managers were uninitialized", LogLevel.Info);
+        }
+
+        public static void RegisterTypesFrom(Assembly assembly)
+        {
+            foreach(var type in assembly.GetTypes())
+            {
+                var questAttr = type.GetCustomAttribute<CustomQuestAttribute>();
+                
+                if (questAttr != null)
+                {
+                    CustomQuestConverter.RegisterType(type, questAttr.Name);
+                }
+            }
         }
     }
 }
