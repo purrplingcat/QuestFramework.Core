@@ -2,10 +2,10 @@
 using Newtonsoft.Json;
 using QuestFramework.API;
 using QuestFramework.API.Exceptions;
-using QuestFramework.Model;
 using QuestFramework.Quests.Providers;
 using QuestFramework.Quests.Data;
 using StardewValley;
+using QuestFramework.Framework.Model;
 
 namespace QuestFramework.Framework
 {

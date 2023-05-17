@@ -2,7 +2,7 @@
 using QuestFramework.API;
 using QuestFramework.Framework.Converters;
 
-namespace QuestFramework.Model
+namespace QuestFramework.Framework.Model
 {
     internal class QuestManagerState
     {

@@ -1,6 +1,6 @@
 ﻿using StardewModdingAPI;
 
-namespace QuestFramework.Model
+namespace QuestFramework.Framework.Model
 {
     internal class QuestFrameworkState
     {

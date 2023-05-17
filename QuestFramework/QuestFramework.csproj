@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\QuestFramework.API\QuestFramework.API.csproj" />
-    <ProjectReference Include="..\QuestFramework.Quests\QuestFramework.Quests.csproj" />
   </ItemGroup>
 
 </Project>

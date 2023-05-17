@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace QuestFramework.API.Converters
+namespace QuestFramework.Framework.Converters
 {
     public abstract class PolymorphicConverter<T> : JsonConverter<T> where T : class
     {
