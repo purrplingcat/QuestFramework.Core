@@ -1,9 +1,8 @@
 ﻿using QuestFramework.API;
-using QuestFramework.Quests;
 
-namespace QuestFramework.Providers
+namespace QuestFramework.Quests.Providers
 {
-    internal class DefaultQuestProvider : IQuestProvider
+    public class DefaultQuestProvider : IQuestProvider
     {
         public ICustomQuest? CreateQuest(IQuestMetadata metadata)
         {

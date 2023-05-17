@@ -12,6 +12,7 @@ namespace QuestFramework.API
         void OnAccept();
         void OnAdd(IQuestManager manager);
         void OnRemoved();
+        bool Reload();
         void Update();
     }
 }

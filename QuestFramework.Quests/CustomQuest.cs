@@ -11,21 +11,21 @@ namespace QuestFramework.Quests
         protected readonly NetString questKey = new("");
         protected readonly NetString typeDefinitionId = new("");
 
-        [JsonProperty]
+        [JsonProperty("Id")]
         public string Id
         {
             get => id.Value;
             set => id.Value = value;
         }
 
-        [JsonProperty]
+        [JsonProperty("QuestKey")]
         public string QuestKey 
         { 
             get => questKey.Value; 
             set => questKey.Value = value; 
         }
 
-        [JsonProperty]
+        [JsonProperty("TypeDefinitionId")]
         public string TypeDefinitionId 
         { 
             get => typeDefinitionId.Value;
@@ -73,7 +73,8 @@ namespace QuestFramework.Quests
         public abstract void OnMoneyRewardClaimed();
         public abstract bool OnLeaveQuestPage();
         public abstract void OnAccept();
-        
+        public abstract bool Reload();
+
         public abstract void Update();
 
         public virtual void OnAdd(IQuestManager manager)

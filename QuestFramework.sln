@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuestFramework", "QuestFramework\QuestFramework.csproj", "{8AA09067-0EB6-499C-986A-E4942F89F094}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuestFramework", "QuestFramework\QuestFramework.csproj", "{8AA09067-0EB6-499C-986A-E4942F89F094}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuestFramework.API", "QuestFramework.API\QuestFramework.API.csproj", "{2C5E75AF-ED30-434E-813C-2E8ED9A93075}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuestFramework.API", "QuestFramework.API\QuestFramework.API.csproj", "{2C5E75AF-ED30-434E-813C-2E8ED9A93075}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuestFramework.Quests", "QuestFramework.Quests\QuestFramework.Quests.csproj", "{F2E987DE-7913-4E44-AE57-97AA606D572F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{2C5E75AF-ED30-434E-813C-2E8ED9A93075}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C5E75AF-ED30-434E-813C-2E8ED9A93075}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C5E75AF-ED30-434E-813C-2E8ED9A93075}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2E987DE-7913-4E44-AE57-97AA606D572F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2E987DE-7913-4E44-AE57-97AA606D572F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2E987DE-7913-4E44-AE57-97AA606D572F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2E987DE-7913-4E44-AE57-97AA606D572F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

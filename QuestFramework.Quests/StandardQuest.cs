@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace QuestFramework.Quests
+﻿namespace QuestFramework.Quests
 {
     public class StandardQuest : CustomQuest
     {
@@ -12,6 +6,7 @@ namespace QuestFramework.Quests
 
         public StandardQuest(string questId, string questKey = "", string typeDefinitionId = "") : base(questId, questKey, typeDefinitionId)
         {
+            Reload();
         }
 
         public override bool CanBeCancelled()
@@ -88,6 +83,11 @@ namespace QuestFramework.Quests
         public override void OnMoneyRewardClaimed()
         {
             throw new NotImplementedException();
+        }
+
+        public override bool Reload()
+        {
+            return true;
         }
 
         public override bool ShouldDisplayAsComplete()

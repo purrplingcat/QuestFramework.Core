@@ -2,9 +2,9 @@
 using Newtonsoft.Json;
 using QuestFramework.API;
 using QuestFramework.API.Exceptions;
-using QuestFramework.Data;
 using QuestFramework.Model;
-using QuestFramework.Providers;
+using QuestFramework.Quests.Providers;
+using QuestFramework.Quests.Data;
 using StardewValley;
 
 namespace QuestFramework.Framework
@@ -138,14 +138,21 @@ namespace QuestFramework.Framework
         public void LoadFromState(QuestManagerState managerState)
         {
             _quests.Clear();
-            _quests.Set(managerState.Quests);
+            
+            foreach(var quest in managerState.Quests)
+            {
+                if (quest != null && quest.Reload())
+                {
+                    _quests.Add(quest);
+                }
+            }
         }
 
         public QuestManagerState GetSaveState()
         {
             return new QuestManagerState()
             {
-                Quests = new List<ICustomQuest>(Quests),
+                Quests = _quests.ToList(),
             };
         }
 

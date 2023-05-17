@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuestFramework.Data
+namespace QuestFramework.Quests.Data
 {
     internal record QuestMetadata : IQuestMetadata
     {
