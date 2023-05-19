@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using QuestFramework.API;
 using QuestFramework.Framework.Attributes;
+using StardewValley;
 
 namespace QuestFramework.Quests.Objectives
 {
@@ -10,6 +11,7 @@ namespace QuestFramework.Quests.Objectives
     {
         protected readonly NetInt currentCount = new(0);
         protected readonly NetInt requiredCount = new(1);
+        protected readonly NetString conditionsQuery = new();
 
         [JsonProperty("CurrentCount")]
         public int CurrentCount
@@ -39,6 +41,16 @@ namespace QuestFramework.Quests.Objectives
             NetFields.SetOwner(this)
                 .AddField(currentCount, "currentCount")
                 .AddField(requiredCount, "requiredCount");
+        }
+
+        protected bool CheckConditions(GameLocation? location = null, Farmer? player = null, Item? item = null, Random? random = null, HashSet<string>? ignoreQueryKeys = null)
+        {
+            if (string.IsNullOrWhiteSpace(conditionsQuery.Value))
+            {
+                return GameStateQuery.CheckConditions(conditionsQuery.Value, location, player, item, random, ignoreQueryKeys);
+            }
+
+            return true;
         }
 
         public string GetDescription()
