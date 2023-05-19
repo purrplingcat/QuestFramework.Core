@@ -9,8 +9,9 @@ namespace QuestFramework.API
         IList<ICustomQuest> Quests { get; }
         bool IsActive { get; }
 
-        void AddQuest(string questId, int? seed = null);
-        void AddQuest(ICustomQuest quest);
+        void AddQuest(string questId, int? seed = null, bool ignoreDuplicities = false);
+        void AddQuest(ICustomQuest quest, bool ignoreDuplicities = false);
+        bool HasQuest(string questId);
         void Update();
     }
 }

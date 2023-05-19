@@ -1,7 +1,7 @@
 ﻿using Netcode;
 using Newtonsoft.Json;
 using QuestFramework.API;
-using QuestFramework.API.Attributes;
+using QuestFramework.Framework.Attributes;
 
 namespace QuestFramework.Quests.Objectives
 {

@@ -1,5 +1,5 @@
 ﻿using QuestFramework.API;
-using QuestFramework.API.Attributes;
+using QuestFramework.Framework.Attributes;
 using System.Reflection;
 
 namespace QuestFramework.Framework.Converters

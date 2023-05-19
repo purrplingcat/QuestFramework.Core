@@ -1,15 +1,16 @@
 ﻿using Newtonsoft.Json;
-using QuestFramework.Extensions;
-using QuestFramework.Framework;
-using QuestFramework.Framework.Networking;
 using StardewValley;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using QuestFramework.API.Attributes;
+using QuestFramework.Framework;
+using QuestFramework.Framework.Networking;
+using QuestFramework.Framework.Attributes;
 using QuestFramework.Framework.Converters;
 using QuestFramework.Quests;
+using QuestFramework.Extensions;
+using QuestFramework.Game;
 
 namespace QuestFramework
 {
@@ -28,7 +29,7 @@ namespace QuestFramework
         public override void Entry(IModHelper helper)
         {
             Logger.Setup(Monitor);
-            RegisterTypesFrom(typeof(CustomQuest).Assembly);
+            EventCommands.RegisterCommands(ModManifest.UniqueID);
             RegisterTypesFrom(GetType().Assembly);
 
             Config = helper.ReadConfig<QuestFrameworkConfig>();

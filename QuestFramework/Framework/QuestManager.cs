@@ -1,11 +1,11 @@
 ﻿using Netcode;
-using Newtonsoft.Json;
+using StardewValley;
 using QuestFramework.API;
-using QuestFramework.API.Exceptions;
 using QuestFramework.Quests.Providers;
 using QuestFramework.Quests.Data;
-using StardewValley;
 using QuestFramework.Framework.Model;
+using QuestFramework.Framework.Exceptions;
+using StardewValley.Quests;
 
 namespace QuestFramework.Framework
 {
@@ -104,8 +104,20 @@ namespace QuestFramework.Framework
             }
         }
 
-        public void AddQuest(string questId, int? seed = null)
+        public void AddQuest(string questId, int? seed = null, bool ignoreDuplicities = false)
         {
+            if (string.IsNullOrWhiteSpace(questId))
+            {
+                Logger.Warn("No quest ID specified!");
+                return;
+            }
+
+            if (!ignoreDuplicities && HasQuest(questId))
+            {
+                Logger.Warn($"Quest with ID '{questId}' is already added.");
+                return;
+            }
+
             try
             {
                 ICustomQuest? quest = CreateQuest(questId, seed);
@@ -116,7 +128,7 @@ namespace QuestFramework.Framework
                     return;
                 }
 
-                AddQuest(quest);
+                AddQuest(quest, ignoreDuplicities);
             }
             catch (QuestException e)
             {
@@ -124,9 +136,9 @@ namespace QuestFramework.Framework
             }
         }
 
-        public void AddQuest(ICustomQuest quest)
+        public void AddQuest(ICustomQuest quest, bool allowDuplicity = false)
         {
-            if (!string.IsNullOrWhiteSpace(quest.Id) && Quests.Any(q => q.Id == quest.Id))
+            if (!allowDuplicity && !string.IsNullOrWhiteSpace(quest.Id) && HasQuest(quest.Id))
             {
                 Logger.Warn($"Quest with ID '{quest.Id}' is already added.");
                 return;
@@ -134,6 +146,8 @@ namespace QuestFramework.Framework
 
             Quests.Add(quest);
         }
+
+        public bool HasQuest(string questId) => Quests.Any(q => q.Id == questId);
 
         public void LoadFromState(QuestManagerState managerState)
         {

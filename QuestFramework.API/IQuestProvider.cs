@@ -1,4 +1,5 @@
-﻿using StardewValley;
+﻿using StardewModdingAPI;
+using StardewValley;
 namespace QuestFramework.API
 {
     public interface IQuestProvider

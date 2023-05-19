@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuestFramework.API.Exceptions
+namespace QuestFramework.Framework.Exceptions
 {
     public class QuestException : Exception
     {
