@@ -29,8 +29,9 @@ namespace QuestFramework
         public override void Entry(IModHelper helper)
         {
             Logger.Setup(Monitor);
-            EventCommands.RegisterCommands(ModManifest.UniqueID);
+            
             RegisterTypesFrom(GetType().Assembly);
+            EventCommands.RegisterCommands(ModManifest.UniqueID);
 
             Config = helper.ReadConfig<QuestFrameworkConfig>();
             Synchronizer = new QuestSynchronizer(helper.Events, helper.Multiplayer, helper.Translation, ModManifest);
