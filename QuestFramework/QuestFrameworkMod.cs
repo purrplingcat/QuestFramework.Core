@@ -8,9 +8,10 @@ using QuestFramework.Framework;
 using QuestFramework.Framework.Networking;
 using QuestFramework.Framework.Attributes;
 using QuestFramework.Framework.Converters;
-using QuestFramework.Quests;
 using QuestFramework.Extensions;
 using QuestFramework.Game;
+using QuestFramework.Framework.Patching;
+using QuestFramework.Patches;
 
 namespace QuestFramework
 {
@@ -36,6 +37,10 @@ namespace QuestFramework
             Config = helper.ReadConfig<QuestFrameworkConfig>();
             Synchronizer = new QuestSynchronizer(helper.Events, helper.Multiplayer, helper.Translation, ModManifest);
             SaveManager = new QuestSaveManager(_jsonSerializerSettings, helper.Data, ModManifest);
+
+            HarmonyPatcher.Apply(this, new[] {
+                new FarmerPatcher(),
+            });
             
             helper.Events.GameLoop.UpdateTicking += OnGameUpdating;
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;

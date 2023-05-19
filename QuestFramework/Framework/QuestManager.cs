@@ -62,7 +62,15 @@ namespace QuestFramework.Framework
             _quests.OnArrayReplaced += OnQuestsReplaced;
         }
 
-        private void OnQuestChanged(NetList<ICustomQuest, NetRef<ICustomQuest>> list, int index, ICustomQuest oldValue, ICustomQuest newValue) => HookOnQuest(newValue);
+        private void OnQuestChanged(NetList<ICustomQuest, NetRef<ICustomQuest>> list, int index, ICustomQuest oldValue, ICustomQuest newValue)
+        {
+            if (oldValue != null && oldValue != newValue)
+            {
+                oldValue.OnRemoved();
+            }
+
+            HookOnQuest(newValue);
+        }
 
         private void OnQuestsReplaced(NetList<ICustomQuest, NetRef<ICustomQuest>> list, IList<ICustomQuest> before, IList<ICustomQuest> after)
         {
@@ -145,6 +153,16 @@ namespace QuestFramework.Framework
             }
 
             Quests.Add(quest);
+        }
+
+        public void RemoveQuest(string questId)
+        {
+            var quest = Quests.FirstOrDefault(q => q.Id == questId);
+
+            if (quest != null)
+            {
+                Quests.Remove(quest);
+            }
         }
 
         public bool HasQuest(string questId) => Quests.Any(q => q.Id == questId);
