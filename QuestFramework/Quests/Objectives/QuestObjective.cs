@@ -1,14 +1,13 @@
 ﻿using Netcode;
 using Newtonsoft.Json;
 using QuestFramework.API;
-using QuestFramework.Framework.Attributes;
 using StardewValley;
 
 namespace QuestFramework.Quests.Objectives
 {
-    [QuestObjective("objective")]
-    public class QuestObjective : IQuestObjective, INetObject<NetFields>
+    public abstract class QuestObjective : IQuestObjective, INetObject<NetFields>
     {
+        protected bool _complete;
         protected ICustomQuest? _quest;
         protected readonly NetInt currentCount = new(0);
         protected readonly NetInt requiredCount = new(1);
@@ -45,6 +44,42 @@ namespace QuestFramework.Quests.Objectives
             NetFields.SetOwner(this)
                 .AddField(currentCount, "currentCount")
                 .AddField(requiredCount, "requiredCount");
+
+            currentCount.fieldChangeVisibleEvent += OnCurrentCountChanged;
+        }
+
+        private void OnCurrentCountChanged(NetInt field, int oldValue, int newValue)
+        {
+            if (!Utility.ShouldIgnoreValueChangeCallback())
+            {
+                CheckCompletion();
+            }
+        }
+
+        public virtual void CheckCompletion(bool playSound = true)
+        {
+            if (IsRegistered) { return; }
+
+            bool wasJustCompleted = false;
+
+            if (GetCount() >= GetRequiredCount()) 
+            {
+                if (!_complete)
+                {
+                    wasJustCompleted = true;
+                }
+                _complete = true;
+            }
+
+            if (_quest != null) 
+            {
+                _quest.CheckCompletion();
+
+                if (wasJustCompleted && playSound) 
+                {
+                    Game1.playSound("jingle1");
+                }
+            }
         }
 
         protected bool CheckConditions(GameLocation? location = null, Farmer? player = null, Item? item = null, Random? random = null, HashSet<string>? ignoreQueryKeys = null)
@@ -66,10 +101,7 @@ namespace QuestFramework.Quests.Objectives
 
         public int GetRequiredCount() => RequiredCount;
 
-        public bool IsComplete()
-        {
-            throw new NotImplementedException();
-        }
+        public bool IsComplete() => _complete;
 
         public void IncrementCount(int amount) => SetCount(CurrentCount + amount);
 
@@ -83,15 +115,16 @@ namespace QuestFramework.Quests.Objectives
             }
         }
 
-        public bool ShouldShowProgress()
+        public virtual bool ShouldShowProgress()
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public void Register(ICustomQuest quest)
         {
             _quest = quest;
             OnRegister();
+            CheckCompletion(playSound: false);
         }
 
         public void Unregister()
@@ -106,6 +139,16 @@ namespace QuestFramework.Quests.Objectives
 
         protected virtual void OnUnregister()
         {
+        }
+
+        protected abstract void HandleMessage(IQuestMessage questMessage);
+
+        public void OnMessage(IQuestMessage questMessage)
+        {
+            if (CheckConditions())
+            {
+                HandleMessage(questMessage);
+            }
         }
     }
 }

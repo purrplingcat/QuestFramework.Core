@@ -112,6 +112,16 @@ namespace QuestFramework.Framework
             }
         }
 
+        public void CheckQuests<T>(string type, T? payload = null) where T : class
+        {
+            IQuestMessage questMessage = new QuestMessage<T>(payload, type);
+
+            foreach (var quest in Quests)
+            {
+                quest.HandleMessage(questMessage);
+            }
+        }
+
         public void AddQuest(string questId, int? seed = null, bool ignoreDuplicities = false)
         {
             if (string.IsNullOrWhiteSpace(questId))

@@ -1,14 +1,26 @@
 ﻿using Netcode;
 using Newtonsoft.Json;
 using QuestFramework.API;
+using QuestFramework.Quests.Objectives;
 
 namespace QuestFramework.Quests
 {
     public abstract class CustomQuest : ICustomQuest
     {
+        public enum QuestState
+        {
+            InProgress,
+            Complete,
+            Failed
+        }
+
+        private readonly List<QuestObjective> _registeredObjectives = new();
         protected readonly NetString id = new();
         protected readonly NetString questKey = new("");
         protected readonly NetString typeDefinitionId = new("");
+        protected readonly NetEnum<QuestState> state = new(QuestState.InProgress);
+        protected NetObjectList<QuestObjective> objectives = new();
+        protected bool _objectivesRegistrationDirty;
 
         [JsonProperty("Id")]
         public string Id
@@ -29,6 +41,13 @@ namespace QuestFramework.Quests
         { 
             get => typeDefinitionId.Value;
             set => typeDefinitionId.Value = value;
+        }
+
+        [JsonProperty("State")]
+        public QuestState State
+        {
+            get => state.Value;
+            set => state.Value = value;
         }
 
         [JsonIgnore]
@@ -55,7 +74,18 @@ namespace QuestFramework.Quests
             netFields.SetOwner(this)
                 .AddField(id, "id")
                 .AddField(questKey, "questKey")
-                .AddField(typeDefinitionId, "typeDefinitionId");
+                .AddField(typeDefinitionId, "typeDefinitionId")
+                .AddField(state, "state")
+                .AddField(objectives, "objectives");
+
+            objectives.OnArrayReplaced += delegate
+            {
+                _objectivesRegistrationDirty = true;
+            };
+            objectives.OnElementChanged += delegate
+            {
+                _objectivesRegistrationDirty = true;
+            };
         }
 
         public abstract string GetName();
@@ -77,7 +107,14 @@ namespace QuestFramework.Quests
         public abstract void OnAccept();
         public abstract bool Reload();
 
-        public abstract void Update();
+        public virtual void Update()
+        {
+            if (_objectivesRegistrationDirty)
+            {
+                _objectivesRegistrationDirty = false;
+                UpdateObjectiveRegistration();
+            }
+        }
 
         public virtual void OnAdd(IQuestManager manager)
         {
@@ -87,6 +124,54 @@ namespace QuestFramework.Quests
         public virtual void OnRemoved()
         {
             Manager = null;
+        }
+
+        protected void UpdateObjectiveRegistration()
+        {
+            for (int i = 0; i < _registeredObjectives.Count; i++)
+            {
+                var objective = _registeredObjectives[i];
+
+                if (!objectives.Contains(objective)) { 
+                    objective.Unregister();
+                    _registeredObjectives.Remove(objective);
+                    i--;
+                }
+            }
+
+            foreach (QuestObjective objective in objectives)
+            {
+                if (_registeredObjectives.Contains(objective)) { continue; }
+
+                if (objective.IsRegistered)
+                {
+                    objective.Unregister();
+                }
+
+                objective.Register(this);
+                _registeredObjectives.Add(objective);
+            }
+        }
+
+        public virtual void HandleMessage(IQuestMessage questMessage)
+        {
+            foreach (var objective in objectives) 
+            {
+                objective.OnMessage(questMessage);
+            }
+        }
+
+        public void CheckCompletion()
+        {
+            if (State != QuestState.InProgress) {  return; }
+
+            foreach (var objective in objectives)
+            {
+                if (!objective.IsComplete()) 
+                { 
+                    return; 
+                }
+            }
         }
     }
 }
