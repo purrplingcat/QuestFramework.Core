@@ -1,0 +1,4 @@
+﻿[*.{cs,vb}]
+
+# IDE0009: Přístup členů by měl být kvalifikovaný.
+dotnet_style_qualification_for_field = false

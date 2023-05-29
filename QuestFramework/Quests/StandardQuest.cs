@@ -10,6 +10,8 @@ namespace QuestFramework.Quests
     public class StandardQuest : CustomQuest, IHaveObjectives
     {
         protected NetObjectList<QuestObjective> objectives = new();
+        protected bool _objectivesRegistrationDirty;
+        private List<QuestObjective> _registeredObjectives;
 
         [JsonProperty("Objectives")]
         public IList<QuestObjective> Objectives => objectives;
@@ -26,6 +28,41 @@ namespace QuestFramework.Quests
             base.InitNetFields(netFields);
 
             netFields.AddField(objectives, "objectives");
+            objectives.OnArrayReplaced += delegate
+            {
+                _objectivesRegistrationDirty = true;
+            };
+            objectives.OnElementChanged += delegate
+            {
+                _objectivesRegistrationDirty = true;
+            };
+        }
+
+        protected void UpdateObjectiveRegistration()
+        {
+            for (int i = 0; i < _registeredObjectives.Count; i++)
+            {
+                var objective = _registeredObjectives[i];
+
+                if (!objectives.Contains(objective)) { 
+                    objective.Unregister();
+                    _registeredObjectives.Remove(objective);
+                    i--;
+                }
+            }
+
+            foreach (QuestObjective objective in objectives)
+            {
+                if (_registeredObjectives.Contains(objective)) { continue; }
+
+                if (objective.IsRegistered)
+                {
+                    objective.Unregister();
+                }
+
+                objective.Register(this);
+                _registeredObjectives.Add(objective);
+            }
         }
 
         public override bool CanBeCancelled()
@@ -126,7 +163,12 @@ namespace QuestFramework.Quests
 
         public override void Update()
         {
-            // TODO: Implement later
+            if (_objectivesRegistrationDirty) 
+            {
+                _objectivesRegistrationDirty = false;
+                UpdateObjectiveRegistration();
+       
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ namespace QuestFramework.Quests.Objectives
     [QuestObjective("objective")]
     public class QuestObjective : IQuestObjective, INetObject<NetFields>
     {
+        protected ICustomQuest? _quest;
         protected readonly NetInt currentCount = new(0);
         protected readonly NetInt requiredCount = new(1);
         protected readonly NetString conditionsQuery = new();
@@ -26,6 +27,9 @@ namespace QuestFramework.Quests.Objectives
             get => requiredCount.Value;
             set => requiredCount.Value = value;
         }
+
+        [JsonIgnore]
+        public bool IsRegistered => _quest != null;
 
         public QuestObjective()
         {
@@ -67,10 +71,7 @@ namespace QuestFramework.Quests.Objectives
             throw new NotImplementedException();
         }
 
-        public void IncrementCount(int amount)
-        {
-            SetCount(CurrentCount + amount);
-        }
+        public void IncrementCount(int amount) => SetCount(CurrentCount + amount);
 
         public void SetCount(int count)
         {
@@ -85,6 +86,26 @@ namespace QuestFramework.Quests.Objectives
         public bool ShouldShowProgress()
         {
             throw new NotImplementedException();
+        }
+
+        public void Register(ICustomQuest quest)
+        {
+            _quest = quest;
+            OnRegister();
+        }
+
+        public void Unregister()
+        {
+            _quest = null;
+            OnUnregister();
+        }
+
+        protected virtual void OnRegister()
+        {
+        }
+
+        protected virtual void OnUnregister()
+        {
         }
     }
 }
