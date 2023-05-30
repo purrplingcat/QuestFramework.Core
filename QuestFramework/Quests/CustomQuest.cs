@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using QuestFramework.API;
 using QuestFramework.Quests.Objectives;
+using StardewValley;
 
 namespace QuestFramework.Quests
 {
@@ -171,6 +172,20 @@ namespace QuestFramework.Quests
                 { 
                     return; 
                 }
+            }
+
+            Complete();
+        }
+
+        public void Complete()
+        {
+            if (State == QuestState.InProgress)
+            {
+                State = QuestState.Complete;
+                Game1.stats.QuestsCompleted++;
+                Game1.playSound("questcomplete");
+                Game1.dayTimeMoneyBox.questsDirty = true;
+                // TODO: Iterate rewards here to claim
             }
         }
     }

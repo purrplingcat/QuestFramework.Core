@@ -41,13 +41,21 @@ namespace QuestFramework
             HarmonyPatcher.Apply(this, new[] {
                 new FarmerPatcher(),
             });
-            
+
+            helper.Events.GameLoop.DayStarted += OnDayStarted;
+            helper.Events.GameLoop.DayEnding += OnDayEnding;
             helper.Events.GameLoop.UpdateTicking += OnGameUpdating;
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
             helper.Events.GameLoop.Saving += OnSaving;
             helper.Events.GameLoop.ReturnedToTitle += OnExitToTitle;
             helper.Events.Input.ButtonPressed += Input_ButtonPressed;
         }
+
+        private void OnDayEnding(object? sender, DayEndingEventArgs e) 
+            => FakeOrder.Uninstall();
+
+        private void OnDayStarted(object? sender, DayStartedEventArgs e) 
+            => FakeOrder.Install();
 
         // TODO: Only for test purposes. Remove it when it's not needed anymore
         private void Input_ButtonPressed(object? sender, ButtonPressedEventArgs e)
@@ -76,6 +84,7 @@ namespace QuestFramework
 
             if (e.IsMultipleOf(Config.UpdateRate))
             {
+                FakeOrder.Install();
                 QuestManager.Current?.Update();
             }
         }
