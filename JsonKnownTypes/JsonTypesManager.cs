@@ -14,7 +14,9 @@ namespace JsonKnownTypes
         public static JsonDiscriminatorSettings DefaultDiscriminatorSettings { get; set; } =
             new JsonDiscriminatorSettings();
 
-        public static HashSet<Type> KnownTypes { get; } = new HashSet<Type>();
+        internal static HashSet<Type> KnownTypes { get; } = new HashSet<Type>();
+
+        public static event Action<Type> TypeRegistered;
 
         internal static DiscriminatorValues GetDiscriminatorValues<T>()
         {
@@ -48,13 +50,22 @@ namespace JsonKnownTypes
                 .ToArray();
         }
 
+        public static void RegisterType(params Type[] types)
+        {
+            foreach (var type in types)
+            {
+                KnownTypes.Add(type);
+                TypeRegistered?.Invoke(type);
+            }
+        }
+
         public static void RegisterTypesFrom(Assembly assembly, bool all = false)
         {
             foreach (var type in assembly.GetTypes())
             {
                 if (all || AttributesManager.GetJsonTypeAttribute(type) != null)
                 {
-                    KnownTypes.Add(type);
+                    RegisterType(type);
                 }
             }
         }

@@ -17,7 +17,7 @@ namespace QuestFramework.Framework.Patching
                 ?? throw new InvalidOperationException($"Can't find method {GetMethodString(typeof(TTarget), name, parameters, generics)} to patch.");
         }
 
-        protected ConstructorInfo RequireConstructor<TTarget>(Type[] parameters = null)
+        protected ConstructorInfo RequireConstructor<TTarget>(Type[]? parameters = null)
         {
             return
                 AccessTools.Constructor(typeof(TTarget), parameters)
