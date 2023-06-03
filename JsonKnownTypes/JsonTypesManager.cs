@@ -14,7 +14,7 @@ namespace JsonKnownTypes
         public static JsonDiscriminatorSettings DefaultDiscriminatorSettings { get; set; } =
             new JsonDiscriminatorSettings();
 
-        internal static HashSet<Type> KnownTypes { get; } = new HashSet<Type>();
+        internal static HashSet<JsonTypeDefinition> KnownTypes { get; } = new();
 
         public static event Action<Type, string> TypeRegistered;
 
@@ -30,23 +30,18 @@ namespace JsonKnownTypes
 
             typeSettings.AddJsonIncludes<T>();
 
-            var allTypes = GetFilteredDerived<T>();
-            typeSettings.AddJsonTypes(allTypes);
-
-            if (discriminatorSettings.UseClassNameAsDiscriminator)
-            {
-                typeSettings.AddAutoDiscriminators(allTypes);
-            }
+            var knownTypeDefs = GetFilteredDerived<T>();
+            typeSettings.AddAutoDiscriminators(knownTypeDefs);
 
             return typeSettings;
         }
 
-        private static Type[] GetFilteredDerived<T>()
+        private static JsonTypeDefinition[] GetFilteredDerived<T>()
         {
             var type = typeof(T);
 
             return KnownTypes
-                .Where(x => type.IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
+                .Where(d => type.IsAssignableFrom(d.Type) && !d.Type.IsInterface && !d.Type.IsAbstract)
                 .ToArray();
         }
 
@@ -55,10 +50,10 @@ namespace JsonKnownTypes
             foreach (var type in types)
             {
                 var typeAttr = AttributesManager.GetJsonTypeAttribute(type);
-                string discriminator = typeAttr?.Discriminator ?? type.Name;
+                var typeDef = new JsonTypeDefinition(type, typeAttr?.Discriminator);
 
-                KnownTypes.Add(type);
-                TypeRegistered?.Invoke(type, discriminator);
+                KnownTypes.Add(typeDef);
+                TypeRegistered?.Invoke(typeDef.Type, typeDef.Discriminator);
             }
         }
 

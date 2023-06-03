@@ -27,27 +27,22 @@ namespace JsonKnownTypes
             }
         }
 
-        internal static void AddJsonTypes(this DiscriminatorValues discriminatorValues, Type[] inherited)
+        internal static void AddJsonTypes(this DiscriminatorValues discriminatorValues, JsonTypeDefinition[] typeDefs)
         {
-            foreach (var type in inherited)
+            foreach (var typeDef in typeDefs)
             {
-                var attr = AttributesManager.GetJsonTypeAttribute(type);
-                if (attr != null && !discriminatorValues.Contains(type))
-                {
-                    var discriminator = attr.Discriminator ?? type.Name;
-                    discriminatorValues.AddType(type, discriminator);
-                }   
+                discriminatorValues.AddType(typeDef.Type, typeDef.Discriminator);
             }
         }
 
-        internal static void AddAutoDiscriminators(this DiscriminatorValues discriminatorValues, Type[] inherited)
+        internal static void AddAutoDiscriminators(this DiscriminatorValues discriminatorValues, JsonTypeDefinition[] typeDefs)
         {
-            foreach (var type in inherited)
+            foreach (var typeDef in typeDefs)
             {
-                if (discriminatorValues.Contains(type))
+                if (discriminatorValues.Contains(typeDef.Type))
                     continue;
 
-                discriminatorValues.AddType(type, type.Name);
+                discriminatorValues.AddType(typeDef.Type, typeDef.Discriminator);
             }
         }
     }

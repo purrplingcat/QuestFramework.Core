@@ -12,16 +12,5 @@ namespace JsonKnownTypes
         /// Discriminator field name in json representation
         /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        /// Use class name as discriminator if JsonKnown attribute didn't add
-        /// </summary>
-        public bool UseClassNameAsDiscriminator
-        {
-            get => AutoJson != false;
-            set => AutoJson = value;
-        }
-
-        internal bool? AutoJson;
     }
 }
