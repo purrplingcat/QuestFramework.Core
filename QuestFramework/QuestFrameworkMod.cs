@@ -12,6 +12,7 @@ using QuestFramework.Extensions;
 using QuestFramework.Game;
 using QuestFramework.Framework.Patching;
 using QuestFramework.Patches;
+using JsonKnownTypes;
 
 namespace QuestFramework
 {
@@ -31,7 +32,7 @@ namespace QuestFramework
         {
             Logger.Setup(Monitor);
             
-            RegisterTypesFrom(GetType().Assembly);
+            JsonTypesManager.RegisterTypesFrom(GetType().Assembly);
             EventCommands.RegisterCommands(ModManifest.UniqueID);
 
             Config = helper.ReadConfig<QuestFrameworkConfig>();
@@ -115,19 +116,6 @@ namespace QuestFramework
 
             QuestManager.Managers.Clear();
             Monitor.Log("Quest Managers were uninitialized", LogLevel.Info);
-        }
-
-        public static void RegisterTypesFrom(Assembly assembly)
-        {
-            foreach(var type in assembly.GetTypes())
-            {
-                var questAttr = type.GetCustomAttribute<CustomQuestAttribute>();
-                
-                if (questAttr != null)
-                {
-                    CustomQuestConverter.RegisterType(type, questAttr.Name);
-                }
-            }
         }
     }
 }

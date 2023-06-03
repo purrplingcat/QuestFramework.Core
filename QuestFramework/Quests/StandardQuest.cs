@@ -1,4 +1,5 @@
-﻿using Netcode;
+﻿using JsonKnownTypes;
+using Netcode;
 using Newtonsoft.Json;
 using QuestFramework.API;
 using QuestFramework.Framework.Attributes;
@@ -6,12 +7,9 @@ using QuestFramework.Quests.Objectives;
 
 namespace QuestFramework.Quests
 {
-    [CustomQuest("quest")]
+    [JsonType("Standard")]
     public class StandardQuest : CustomQuest, IHaveObjectives
     {
-        [JsonProperty("Objectives")]
-        public IList<QuestObjective> Objectives => objectives;
-
         public StandardQuest() { }
 
         public StandardQuest(string questId, string questKey = "", string typeDefinitionId = "") : base(questId, questKey, typeDefinitionId)

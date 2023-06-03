@@ -1,6 +1,8 @@
-﻿using Netcode;
+﻿using JsonKnownTypes;
+using Netcode;
 using Newtonsoft.Json;
 using QuestFramework.API;
+using QuestFramework.Framework.Converters;
 using QuestFramework.Quests.Objectives;
 using StardewValley;
 
@@ -56,6 +58,12 @@ namespace QuestFramework.Quests
 
         [JsonIgnore]
         public NetFields NetFields { get; }
+        [JsonProperty("Objectives")]
+        public IList<QuestObjective> Objectives
+        {
+            get => objectives;
+            set => objectives.Set(value);
+        }
 
         public CustomQuest() 
         {

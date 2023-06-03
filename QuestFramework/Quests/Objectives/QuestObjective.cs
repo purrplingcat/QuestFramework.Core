@@ -1,10 +1,14 @@
-﻿using Netcode;
+﻿using JsonKnownTypes;
+using Netcode;
 using Newtonsoft.Json;
 using QuestFramework.API;
+using QuestFramework.Framework.Converters;
 using StardewValley;
 
 namespace QuestFramework.Quests.Objectives
 {
+    [JsonConverter(typeof(QuestConverter<QuestObjective>))]
+    [JsonTypeInclude(typeof(CustomObjective), "Custom")]
     public abstract class QuestObjective : IQuestObjective, INetObject<NetFields>
     {
         protected bool _complete;
@@ -82,15 +86,18 @@ namespace QuestFramework.Quests.Objectives
             }
         }
 
-        protected bool CheckConditions(GameLocation? location = null, Farmer? player = null, Item? item = null, Random? random = null, HashSet<string>? ignoreQueryKeys = null)
+        protected bool CheckConditions(GameLocation? location = null, Farmer? player = null, Item? targetItem = null, Item? inputItem = null, Random? random = null, HashSet<string>? ignoreQueryKeys = null)
         {
             if (string.IsNullOrWhiteSpace(conditionsQuery.Value))
             {
-                return GameStateQuery.CheckConditions(conditionsQuery.Value, location, player, item, random, ignoreQueryKeys);
+                return GameStateQuery.CheckConditions(conditionsQuery.Value, location, player, targetItem, inputItem, random, ignoreQueryKeys);
             }
 
             return true;
         }
+
+        protected virtual bool CheckConditions(IQuestMessage questMessage) 
+            => CheckConditions();
 
         public string GetDescription()
         {
@@ -141,11 +148,12 @@ namespace QuestFramework.Quests.Objectives
         {
         }
 
+        public abstract void Load(ICustomQuest quest, Dictionary<string, string> data);
         protected abstract void HandleMessage(IQuestMessage questMessage);
 
         public void OnMessage(IQuestMessage questMessage)
         {
-            if (CheckConditions())
+            if (CheckConditions(questMessage))
             {
                 HandleMessage(questMessage);
             }
