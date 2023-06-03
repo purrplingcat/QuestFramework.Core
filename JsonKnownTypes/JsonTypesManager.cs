@@ -16,7 +16,7 @@ namespace JsonKnownTypes
 
         internal static HashSet<Type> KnownTypes { get; } = new HashSet<Type>();
 
-        public static event Action<Type> TypeRegistered;
+        public static event Action<Type, string> TypeRegistered;
 
         internal static DiscriminatorValues GetDiscriminatorValues<T>()
         {
@@ -54,8 +54,11 @@ namespace JsonKnownTypes
         {
             foreach (var type in types)
             {
+                var typeAttr = AttributesManager.GetJsonTypeAttribute(type);
+                string discriminator = typeAttr?.Discriminator ?? type.Name;
+
                 KnownTypes.Add(type);
-                TypeRegistered?.Invoke(type);
+                TypeRegistered?.Invoke(type, discriminator);
             }
         }
 

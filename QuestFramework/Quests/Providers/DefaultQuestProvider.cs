@@ -1,4 +1,5 @@
 ﻿using QuestFramework.API;
+using QuestFramework.Quests.Objectives;
 
 namespace QuestFramework.Quests.Providers
 {
@@ -6,7 +7,11 @@ namespace QuestFramework.Quests.Providers
     {
         public ICustomQuest? CreateQuest(IQuestMetadata metadata)
         {
-            return new StandardQuest(metadata.QualifiedId, metadata.LocalId, metadata.TypeIdentifier);
+            var quest = new StandardQuest(metadata.QualifiedId, metadata.LocalId, metadata.TypeIdentifier);
+
+            quest.Objectives.Add(new CustomObjective());
+
+            return quest;
         }
     }
 }
