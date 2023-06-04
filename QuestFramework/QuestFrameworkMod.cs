@@ -31,7 +31,7 @@ namespace QuestFramework
         {
             Logger.Setup(Monitor);
 
-            JsonTypesManager.RegisterTypesFrom(GetType().Assembly);
+            JsonTypesManager.RegisterTypesFromAssembly(GetType().Assembly);
             EventCommands.RegisterCommands(ModManifest.UniqueID);
 
             Config = helper.ReadConfig<QuestFrameworkConfig>();

@@ -161,7 +161,7 @@ namespace QuestFramework.Framework
                 return;
             }
 
-            Logger.Trace($"Quest with ID '{quest.Id}' sucessfully added to {Player.Name}'s quest log.");
+            Logger.Trace($"Quest with ID '{quest.Id}' added to {Player.Name}'s quest log.");
             Quests.Add(quest);
         }
 

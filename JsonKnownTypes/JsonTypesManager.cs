@@ -28,15 +28,13 @@ namespace JsonKnownTypes
 
             var typeSettings = new DiscriminatorValues(typeof(T), discriminatorSettings.DiscriminatorFieldName);
 
-            typeSettings.AddJsonIncludes<T>();
-
-            var knownTypeDefs = GetFilteredDerived<T>();
-            typeSettings.AddAutoDiscriminators(knownTypeDefs);
+            typeSettings.AddIncludes<T>();
+            typeSettings.AddAutoDiscriminators(GetDerivedTypes<T>());
 
             return typeSettings;
         }
 
-        private static JsonTypeDefinition[] GetFilteredDerived<T>()
+        private static JsonTypeDefinition[] GetDerivedTypes<T>()
         {
             var type = typeof(T);
 
@@ -45,7 +43,7 @@ namespace JsonKnownTypes
                 .ToArray();
         }
 
-        public static void RegisterType(params Type[] types)
+        public static void RegisterTypes(params Type[] types)
         {
             foreach (var type in types)
             {
@@ -57,13 +55,13 @@ namespace JsonKnownTypes
             }
         }
 
-        public static void RegisterTypesFrom(Assembly assembly, bool all = false)
+        public static void RegisterTypesFromAssembly(Assembly assembly, bool all = false)
         {
             foreach (var type in assembly.GetTypes())
             {
                 if (all || AttributesManager.GetJsonTypeAttribute(type) != null)
                 {
-                    RegisterType(type);
+                    RegisterTypes(type);
                 }
             }
         }

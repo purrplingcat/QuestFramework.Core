@@ -4,7 +4,7 @@ namespace JsonKnownTypes
 {
     internal static class DiscriminatorValuesManager
     {
-        internal static void AddJsonIncludes<T>(this DiscriminatorValues discriminatorValues)
+        internal static void AddIncludes<T>(this DiscriminatorValues discriminatorValues)
         {
             var attrs = AttributesManager.GetJsonTypeInclude(typeof(T));
             foreach (var attr in attrs)
@@ -24,14 +24,6 @@ namespace JsonKnownTypes
             if (fallbackTypeAttribute != null)
             {
                 discriminatorValues.AddFallbackType(fallbackTypeAttribute.FallbackType);
-            }
-        }
-
-        internal static void AddJsonTypes(this DiscriminatorValues discriminatorValues, JsonTypeDefinition[] typeDefs)
-        {
-            foreach (var typeDef in typeDefs)
-            {
-                discriminatorValues.AddType(typeDef.Type, typeDef.Discriminator);
             }
         }
 
