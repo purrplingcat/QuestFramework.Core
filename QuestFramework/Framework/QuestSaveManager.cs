@@ -31,14 +31,14 @@ namespace QuestFramework.Framework
             };
 
             _data.WriteSaveData(SAVE_KEY, save);
-            Game1.CustomData.Any();
+            Game1.CustomData.Any(); // TODO: Only for debug. Remove this later
             Logger.Info($"State successfully saved for {save.Managers.Count} managers");
         }
 
         public void LoadState()
         {
             QuestFrameworkState save = _data.ReadSaveData<QuestFrameworkState>(SAVE_KEY) ?? new();
-            QuestManager.Managers.Clear();
+            //QuestManager.Managers.Clear();
 
             foreach (var farmer in Game1.getAllFarmers())
             {

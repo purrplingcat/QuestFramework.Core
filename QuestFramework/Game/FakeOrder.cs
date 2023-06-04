@@ -6,7 +6,7 @@ using StardewValley.Monsters;
 
 namespace QuestFramework.Game
 {
-    internal class FakeOrder : SpecialOrder
+    public class FakeOrder : SpecialOrder
     {
         public static FakeOrder? Me { get; private set; }
 
@@ -16,7 +16,7 @@ namespace QuestFramework.Game
 
             Me ??= new FakeOrder();
 
-            if (Context.IsWorldReady && !Game1.player.team.specialOrders.Contains(Me))
+            if (!Game1.player.team.specialOrders.Contains(Me))
             {
                 Me.dueDate.Value = int.MaxValue;
                 Game1.player.team.specialOrders.Add(Me);
@@ -31,6 +31,11 @@ namespace QuestFramework.Game
             {
                 Game1.player.team.specialOrders.Remove(Me);
             }
+        }
+
+        public static void CleanUp()
+        {
+            Me = null;
         }
 
         public override void Update()

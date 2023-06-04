@@ -65,7 +65,7 @@ namespace JsonKnownTypes
 
             var discriminatorName = string.IsNullOrWhiteSpace(discriminator) ? "<empty-string>" : discriminator;
             throw new JsonKnownTypesException(
-                $"{discriminatorName} discriminator is not registered for {nameof(T)} type");
+                $"'{discriminatorName}' discriminator is not registered for '{typeof(T).FullName}' type");
         }
 
         private readonly ThreadLocal<bool> _isInWrite = new ThreadLocal<bool>();

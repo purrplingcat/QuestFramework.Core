@@ -9,7 +9,9 @@ namespace QuestFramework.Quests.Providers
         {
             var quest = new StandardQuest(metadata.QualifiedId, metadata.LocalId, metadata.TypeIdentifier);
 
-            quest.Objectives.Add(new CustomObjective());
+            var co = new CustomObjective();
+            co.modData["test"] = "testing";
+            quest.Objectives.Add(co);
 
             return quest;
         }

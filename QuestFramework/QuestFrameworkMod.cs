@@ -16,6 +16,7 @@ namespace QuestFramework
     public class QuestFrameworkMod : Mod
     {
         private readonly JsonSerializerSettings _jsonSerializerSettings = new();
+        private bool _hold = true;
 
         [AllowNull]
         internal static QuestSynchronizer Synchronizer { get; private set; }
@@ -49,11 +50,21 @@ namespace QuestFramework
             helper.Events.Input.ButtonPressed += Input_ButtonPressed;
         }
 
-        private void OnDayEnding(object? sender, DayEndingEventArgs e) 
-            => FakeOrder.Uninstall();
+        [EventPriority(EventPriority.High)]
+        private void OnDayEnding(object? sender, DayEndingEventArgs e)
+        {
+            _hold = true;
+            QuestManager.Current?.Update();
+            FakeOrder.Uninstall();
+        }
 
-        private void OnDayStarted(object? sender, DayStartedEventArgs e) 
-            => FakeOrder.Install();
+        [EventPriority(EventPriority.High)]
+        private void OnDayStarted(object? sender, DayStartedEventArgs e)
+        {
+            _hold = false;
+            QuestManager.Current?.Update();
+            FakeOrder.Install();
+        }
 
         // TODO: Only for test purposes. Remove it when it's not needed anymore
         private void Input_ButtonPressed(object? sender, ButtonPressedEventArgs e)
@@ -78,7 +89,7 @@ namespace QuestFramework
 
         private void OnGameUpdating(object? sender, UpdateTickingEventArgs e)
         {
-            if (!Context.IsWorldReady) { return; }
+            if (_hold || !Context.IsWorldReady) { return; }
 
             if (e.IsMultipleOf(Config.UpdateRate))
             {
@@ -103,6 +114,8 @@ namespace QuestFramework
 
         private void OnExitToTitle(object? sender, ReturnedToTitleEventArgs e)
         {
+            _hold = true;
+
             foreach (var manager in QuestManager.Managers.Values)
             {
                 if (manager is IDisposable disbosable)
@@ -111,6 +124,7 @@ namespace QuestFramework
                 }
             }
 
+            FakeOrder.CleanUp();
             QuestManager.Managers.Clear();
             Monitor.Log("Quest Managers were uninitialized", LogLevel.Info);
         }

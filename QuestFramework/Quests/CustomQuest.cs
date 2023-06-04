@@ -5,6 +5,7 @@ using QuestFramework.API;
 using QuestFramework.Framework.Converters;
 using QuestFramework.Quests.Objectives;
 using StardewValley;
+using System.Runtime.Serialization;
 
 namespace QuestFramework.Quests
 {
@@ -137,6 +138,8 @@ namespace QuestFramework.Quests
 
         protected void UpdateObjectiveRegistration()
         {
+            objectives.Filter(o => o != null);
+
             for (int i = 0; i < _registeredObjectives.Count; i++)
             {
                 var objective = _registeredObjectives[i];
@@ -195,6 +198,12 @@ namespace QuestFramework.Quests
                 Game1.dayTimeMoneyBox.questsDirty = true;
                 // TODO: Iterate rewards here to claim
             }
+        }
+
+        [OnDeserialized]
+        internal void OnDeserializedMethod(StreamingContext context)
+        {
+            objectives.Filter(o => o != null);
         }
     }
 }
