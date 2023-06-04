@@ -6,7 +6,7 @@ using StardewValley.Monsters;
 
 namespace QuestFramework.Game
 {
-    public class FakeOrder : SpecialOrder
+    internal class FakeOrder : SpecialOrder
     {
         public static FakeOrder? Me { get; private set; }
 

@@ -41,12 +41,16 @@ namespace QuestFramework.Quests
 
         public override string GetName()
         {
-            throw new NotImplementedException();
+            return questKey.Value;
         }
 
         public override List<string> GetObjectiveDescriptions()
         {
-            throw new NotImplementedException();
+            return Objectives
+                .Select(o => o.ShouldShowProgress() 
+                    ? $"{o.GetDescription()} ({o.GetCount()}/{o.GetRequiredCount()})" 
+                    : o.GetDescription())
+                .ToList();
         }
 
         public IList<IQuestObjective> GetObjectives()
@@ -72,12 +76,12 @@ namespace QuestFramework.Quests
 
         public override bool IsHidden()
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public override bool IsTimedQuest()
         {
-            throw new NotImplementedException();
+            return false; // Testing purposes only
         }
 
         public override void MarkAsViewed()
@@ -107,12 +111,7 @@ namespace QuestFramework.Quests
 
         public override bool ShouldDisplayAsComplete()
         {
-            throw new NotImplementedException();
-        }
-
-        public override bool ShouldDisplayAsNew()
-        {
-            throw new NotImplementedException();
+            return false; // TODO: Testing purposes only
         }
     }
 }

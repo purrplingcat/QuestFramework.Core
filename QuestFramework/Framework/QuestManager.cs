@@ -5,7 +5,6 @@ using QuestFramework.Quests.Providers;
 using QuestFramework.Quests.Data;
 using QuestFramework.Framework.Model;
 using QuestFramework.Framework.Exceptions;
-using StardewValley.Quests;
 
 namespace QuestFramework.Framework
 {
@@ -158,10 +157,11 @@ namespace QuestFramework.Framework
         {
             if (!allowDuplicity && !string.IsNullOrWhiteSpace(quest.Id) && HasQuest(quest.Id))
             {
-                Logger.Warn($"Quest with ID '{quest.Id}' is already added.");
+                Logger.Warn($"Quest with ID '{quest.Id}' is already added in {Player.Name}'s quest log.");
                 return;
             }
 
+            Logger.Trace($"Quest with ID '{quest.Id}' sucessfully added to {Player.Name}'s quest log.");
             Quests.Add(quest);
         }
 

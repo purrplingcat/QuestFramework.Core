@@ -23,7 +23,8 @@ namespace QuestFramework.Quests
         protected readonly NetString questKey = new("");
         protected readonly NetString typeDefinitionId = new("");
         protected readonly NetEnum<QuestState> state = new(QuestState.InProgress);
-        protected NetObjectList<QuestObjective> objectives = new();
+        protected readonly NetObjectList<QuestObjective> objectives = new();
+        protected readonly NetBool showNew = new();
         protected bool _objectivesRegistrationDirty;
 
         [JsonProperty("Id")]
@@ -54,11 +55,19 @@ namespace QuestFramework.Quests
             set => state.Value = value;
         }
 
+        [JsonProperty("ShowNew")]
+        public bool ShowNew
+        {
+            get => showNew.Value;
+            set => showNew.Value = value;
+        }
+
         [JsonIgnore]
         public IQuestManager? Manager { get; private set; }
 
         [JsonIgnore]
         public NetFields NetFields { get; }
+
         [JsonProperty("Objectives")]
         public IList<QuestObjective> Objectives
         {
@@ -104,7 +113,6 @@ namespace QuestFramework.Quests
         public abstract List<string> GetObjectiveDescriptions();
         public abstract bool CanBeCancelled();
         public abstract void MarkAsViewed();
-        public abstract bool ShouldDisplayAsNew();
         public abstract bool ShouldDisplayAsComplete();
         public abstract bool IsTimedQuest();
         public abstract int GetDaysLeft();
@@ -116,6 +124,11 @@ namespace QuestFramework.Quests
         public abstract bool OnLeaveQuestPage();
         public abstract void OnAccept();
         public abstract bool Reload();
+
+        public virtual bool ShouldDisplayAsNew()
+        {
+            return ShowNew;
+        }
 
         public virtual void Update()
         {
@@ -201,9 +214,14 @@ namespace QuestFramework.Quests
         }
 
         [OnDeserialized]
-        internal void OnDeserializedMethod(StreamingContext context)
+        internal void OnDeserialized(StreamingContext context)
         {
             objectives.Filter(o => o != null);
+            OnDeserialized();
+        }
+
+        protected virtual void OnDeserialized() 
+        {
         }
     }
 }

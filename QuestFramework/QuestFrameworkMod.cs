@@ -10,6 +10,7 @@ using QuestFramework.Game;
 using QuestFramework.Framework.Patching;
 using QuestFramework.Patches;
 using JsonKnownTypes;
+using QuestFramework.Game.Menus;
 
 namespace QuestFramework
 {
@@ -37,8 +38,9 @@ namespace QuestFramework
             Synchronizer = new QuestSynchronizer(helper.Events, helper.Multiplayer, helper.Translation, ModManifest);
             SaveManager = new QuestSaveManager(_jsonSerializerSettings, helper.Data, ModManifest);
 
-            HarmonyPatcher.Apply(this, new[] {
+            HarmonyPatcher.Apply(this, new Patcher[] {
                 new FarmerPatcher(),
+                new QuestLogPatcher(),
             });
 
             helper.Events.GameLoop.DayStarted += OnDayStarted;
@@ -48,6 +50,7 @@ namespace QuestFramework
             helper.Events.GameLoop.Saving += OnSaving;
             helper.Events.GameLoop.ReturnedToTitle += OnExitToTitle;
             helper.Events.Input.ButtonPressed += Input_ButtonPressed;
+            helper.Events.Display.MenuChanged += CustomQuestLog.OnMenuChanged;
         }
 
         [EventPriority(EventPriority.High)]

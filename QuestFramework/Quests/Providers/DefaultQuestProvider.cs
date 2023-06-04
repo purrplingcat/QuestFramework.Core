@@ -12,7 +12,7 @@ namespace QuestFramework.Quests.Providers
             var co = new CustomObjective();
             co.modData["test"] = "testing";
             quest.Objectives.Add(co);
-
+            quest.ShowNew = true;
             return quest;
         }
     }

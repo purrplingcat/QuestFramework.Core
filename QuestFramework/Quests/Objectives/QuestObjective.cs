@@ -15,7 +15,8 @@ namespace QuestFramework.Quests.Objectives
         protected ICustomQuest? _quest;
         protected readonly NetInt currentCount = new(0);
         protected readonly NetInt requiredCount = new(1);
-        protected readonly NetString conditionsQuery = new();
+        protected readonly NetString conditionsQueryString = new();
+        protected readonly NetString description = new();
 
         [JsonProperty("CurrentCount")]
         public int CurrentCount
@@ -29,6 +30,13 @@ namespace QuestFramework.Quests.Objectives
         {
             get => requiredCount.Value;
             set => requiredCount.Value = value;
+        }
+
+        [JsonProperty("Description")]
+        public string Description
+        {
+            get => description.Value;
+            set => description.Value = value;
         }
 
         [JsonIgnore]
@@ -88,9 +96,9 @@ namespace QuestFramework.Quests.Objectives
 
         protected bool CheckConditions(GameLocation? location = null, Farmer? player = null, Item? targetItem = null, Item? inputItem = null, Random? random = null, HashSet<string>? ignoreQueryKeys = null)
         {
-            if (string.IsNullOrWhiteSpace(conditionsQuery.Value))
+            if (string.IsNullOrWhiteSpace(conditionsQueryString.Value))
             {
-                return GameStateQuery.CheckConditions(conditionsQuery.Value, location, player, targetItem, inputItem, random, ignoreQueryKeys);
+                return GameStateQuery.CheckConditions(conditionsQueryString.Value, location, player, targetItem, inputItem, random, ignoreQueryKeys);
             }
 
             return true;
@@ -101,7 +109,7 @@ namespace QuestFramework.Quests.Objectives
 
         public string GetDescription()
         {
-            throw new NotImplementedException();
+            return TokenParser.ParseText(Description);
         }
 
         public int GetCount() => CurrentCount;
