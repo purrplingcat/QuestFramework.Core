@@ -40,7 +40,6 @@ namespace QuestFramework
 
             HarmonyPatcher.Apply(this, new Patcher[] {
                 new FarmerPatcher(),
-                new QuestLogPatcher(),
             });
 
             helper.Events.GameLoop.DayStarted += OnDayStarted;

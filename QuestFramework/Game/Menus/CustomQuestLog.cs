@@ -1,12 +1,39 @@
-﻿using StardewModdingAPI;
+﻿using QuestFramework.API;
+using QuestFramework.Extensions;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
+using StardewValley.Quests;
 
 namespace QuestFramework.Game.Menus
 {
     internal class CustomQuestLog : QuestLog
     {
+        protected override IList<IQuest> GetAllQuests()
+        {
+            var quests = new List<IQuest>();
+            var manager = Game1.player.GetQuestManager();
+
+            if (manager != null)
+            {
+                // Add QF quests
+                for (int i = manager.Quests.Count - 1; i >= 0; i--)
+                {
+                    var quest = manager.Quests[i];
+                    if (!quest.IsHidden())
+                    {
+                        quests.Add(quest);
+                    }
+                }
+            }
+
+            // Forward vanilla quests
+            quests.AddRange(base.GetAllQuests());
+
+            return quests;
+        }
+
         public static void HookOnMenu(IDisplayEvents events)
         {
             events.MenuChanged += (_, e) =>
