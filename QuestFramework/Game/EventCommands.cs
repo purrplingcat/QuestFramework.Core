@@ -13,7 +13,7 @@ namespace QuestFramework.Game
                 return;
             }
 
-            Game1.player.GetQuestManager().AddQuest(questId);
+            Game1.player.GetQuestManager()?.AddQuest(questId);
             @event.CurrentCommand++;
         }
 

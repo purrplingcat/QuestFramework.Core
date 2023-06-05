@@ -6,9 +6,14 @@ namespace QuestFramework.Extensions
 {
     public static class FarmerExtensions
     {
-        public static IQuestManager GetQuestManager(this Farmer farmer)
+        public static IQuestManager? GetQuestManager(this Farmer farmer)
         {
-            return QuestManager.Managers[farmer.UniqueMultiplayerID];
+            if (QuestManager.Managers.TryGetValue(farmer.UniqueMultiplayerID, out var manager))
+            {
+                return manager;
+            }
+
+            return null;
         }
     }
 }

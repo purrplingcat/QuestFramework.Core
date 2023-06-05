@@ -50,7 +50,7 @@ namespace QuestFramework
             helper.Events.GameLoop.Saving += OnSaving;
             helper.Events.GameLoop.ReturnedToTitle += OnExitToTitle;
             helper.Events.Input.ButtonPressed += Input_ButtonPressed;
-            helper.Events.Display.MenuChanged += CustomQuestLog.OnMenuChanged;
+            CustomQuestLog.HookOnMenu(helper.Events.Display);
         }
 
         [EventPriority(EventPriority.High)]
@@ -76,7 +76,7 @@ namespace QuestFramework
             
             if (e.Button == SButton.F5)
             {
-                Game1.player.GetQuestManager().AddQuest("test");
+                Game1.player.GetQuestManager()?.AddQuest("test");
             }
 
             if (e.Button == SButton.F6)
@@ -112,6 +112,7 @@ namespace QuestFramework
         {
             if (!Context.IsMainPlayer) { return; }
 
+            QuestSaveManager.HookOnFarmerAddedOrRemoved();
             SaveManager.LoadState();
         }
 

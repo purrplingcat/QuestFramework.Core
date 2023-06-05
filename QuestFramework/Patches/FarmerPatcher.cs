@@ -26,7 +26,7 @@ namespace QuestFramework.Patches
         {
             if (Utils.IsQfQuestId(questId, out string qfQuestId))
             {
-                __instance.GetQuestManager().AddQuest(qfQuestId);
+                __instance.GetQuestManager()?.AddQuest(qfQuestId);
                 return false;
             }
 
@@ -37,7 +37,7 @@ namespace QuestFramework.Patches
         {
             if (Utils.IsQfQuestId(questID, out string qfQuestId))
             {
-                __instance.GetQuestManager().RemoveQuest(qfQuestId);
+                __instance.GetQuestManager()?.RemoveQuest(qfQuestId);
                 return false;
             }
 

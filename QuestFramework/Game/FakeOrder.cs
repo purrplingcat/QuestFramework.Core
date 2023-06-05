@@ -95,7 +95,7 @@ namespace QuestFramework.Game
 
         private static void SendMessage<T>(string type, T message) where T : class
         {
-            Game1.player.GetQuestManager().CheckQuests(type, message);
+            Game1.player.GetQuestManager()?.CheckQuests(type, message);
         }
     }
 }

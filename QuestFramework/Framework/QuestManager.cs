@@ -19,9 +19,12 @@ namespace QuestFramework.Framework
         {
             get
             {
-                if (Managers.TryGetValue(Game1.player.UniqueMultiplayerID, out var manager))
+                if (Game1.player != null)
                 {
-                    return manager;
+                    if (Managers.TryGetValue(Game1.player.UniqueMultiplayerID, out var manager))
+                    {
+                        return manager;
+                    }
                 }
 
                 return null;

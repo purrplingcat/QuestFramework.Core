@@ -55,5 +55,31 @@ namespace QuestFramework.Framework
 
             Logger.Info($"Successully initialized {QuestManager.Managers.Count} Quest Managers");
         }
+
+        public static void HookOnFarmerAddedOrRemoved()
+        {
+            if (!Context.IsWorldReady) { return; }
+
+            Game1.netWorldState.Value.farmhandData.OnValueAdded += (long key, Farmer farmer) =>
+            {
+                if (QuestManager.Managers.ContainsKey(key))
+                {
+                    QuestManager.Managers.Add(key, new QuestManager(farmer));
+                }
+            };
+
+            Game1.netWorldState.Value.farmhandData.OnValueRemoved += (long key, Farmer value) =>
+            {
+                if (QuestManager.Managers.ContainsKey(key))
+                {
+                    if (QuestManager.Managers[key] is IDisposable disposable)
+                    {
+                        disposable.Dispose();
+                    }
+
+                    QuestManager.Managers.Remove(key);
+                }
+            };
+        }
     }
 }

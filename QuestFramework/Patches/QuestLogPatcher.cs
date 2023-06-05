@@ -29,6 +29,8 @@ namespace QuestFramework.Patches
             var pages = new List<List<IQuest>>();
             var manager = Game1.player.GetQuestManager();
 
+            if (manager == null) { return; }
+
             for (int i = manager.Quests.Count - 1; i >= 0; i--)
             {
                 int which = i;
