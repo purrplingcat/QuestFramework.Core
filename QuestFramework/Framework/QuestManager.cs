@@ -8,10 +8,11 @@ using QuestFramework.Framework.Exceptions;
 
 namespace QuestFramework.Framework
 {
-    internal class QuestManager : IQuestManager, INetObject<NetFields>
+    internal class QuestManager : IQuestManager, INetObject<NetFields>, IDisposable
     {
         private readonly NetObjectList<ICustomQuest> _quests = new();
         private readonly NetLong _farmerID = new();
+        private bool _disposedValue;
 
         public static NetRootDictionary<long, QuestManager> Managers { get; } = new();
         public static Dictionary<string, IQuestProvider> Providers { get; } = new();
@@ -68,7 +69,7 @@ namespace QuestFramework.Framework
         {
             if (oldValue != null && oldValue != newValue)
             {
-                oldValue.OnRemoved();
+                oldValue.OnRemove();
             }
 
             HookOnQuest(newValue);
@@ -81,7 +82,7 @@ namespace QuestFramework.Framework
                 foreach (var quest in before)
                 {
                     if (quest == null || after.Contains(quest)) { continue; }
-                    quest.OnRemoved();
+                    quest.OnRemove();
                 }
             }
 
@@ -102,7 +103,7 @@ namespace QuestFramework.Framework
             {
                 if (quest.Manager != null)
                 {
-                    quest.OnRemoved();
+                    quest.OnRemove();
                 }
 
                 quest.OnAdd(this);
@@ -250,6 +251,40 @@ namespace QuestFramework.Framework
                 HookOnQuest(quest);
                 quest.Update();
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    foreach (var quest in Quests)
+                    {
+                        if (quest is not IDisposable disposable) 
+                            continue;
+                        disposable.Dispose();
+                    }
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                _disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~QuestManager()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

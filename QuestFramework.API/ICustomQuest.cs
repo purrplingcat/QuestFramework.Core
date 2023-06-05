@@ -11,7 +11,8 @@ namespace QuestFramework.API
         bool IsAccepted();
         void OnAccept();
         void OnAdd(IQuestManager manager);
-        void OnRemoved();
+        void OnRemove();
+        void OnCancel();
         void HandleMessage(IQuestMessage questMessage);
         bool Reload();
         void Update();

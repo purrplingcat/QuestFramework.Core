@@ -10,6 +10,7 @@ namespace QuestFramework.Quests.Providers
             var quest = new StandardQuest(metadata.QualifiedId, metadata.LocalId, metadata.TypeIdentifier);
 
             var co = new CustomObjective();
+            co.Description = "Test objective";
             co.modData["test"] = "testing";
             quest.Objectives.Add(co);
             quest.ShowNew = true;

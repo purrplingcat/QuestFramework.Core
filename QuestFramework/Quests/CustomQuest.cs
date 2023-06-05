@@ -1,15 +1,13 @@
-﻿using JsonKnownTypes;
-using Netcode;
+﻿using Netcode;
 using Newtonsoft.Json;
 using QuestFramework.API;
-using QuestFramework.Framework.Converters;
 using QuestFramework.Quests.Objectives;
 using StardewValley;
 using System.Runtime.Serialization;
 
 namespace QuestFramework.Quests
 {
-    public abstract class CustomQuest : ICustomQuest
+    public abstract class CustomQuest : ICustomQuest, IDisposable
     {
         public enum QuestState
         {
@@ -26,6 +24,7 @@ namespace QuestFramework.Quests
         protected readonly NetObjectList<QuestObjective> objectives = new();
         protected readonly NetBool showNew = new();
         protected bool _objectivesRegistrationDirty;
+        private bool _disposedValue;
 
         [JsonProperty("Id")]
         public string Id
@@ -79,6 +78,8 @@ namespace QuestFramework.Quests
         {
             NetFields = new NetFields(NetFields.GetNameForInstance(this));
             InitNetFields(NetFields);
+            Initialize();
+            Reload();
         }
 
         public CustomQuest(string id, string questKey = "", string typeDefinitionId = "") : this()
@@ -124,6 +125,7 @@ namespace QuestFramework.Quests
         public abstract bool OnLeaveQuestPage();
         public abstract void OnAccept();
         public abstract bool Reload();
+        protected abstract void Initialize();
 
         public virtual bool ShouldDisplayAsNew()
         {
@@ -144,7 +146,7 @@ namespace QuestFramework.Quests
             Manager = manager;
         }
 
-        public virtual void OnRemoved()
+        public virtual void OnRemove()
         {
             Manager = null;
         }
@@ -222,6 +224,44 @@ namespace QuestFramework.Quests
 
         protected virtual void OnDeserialized() 
         {
+        }
+
+        protected virtual void OnCanceled()
+        {
+        }
+
+        public void OnCancel()
+        {
+            Manager?.Quests.Remove(this);
+            OnCanceled();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                _disposedValue = true;
+            }
+        }
+
+        // ~CustomQuest()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

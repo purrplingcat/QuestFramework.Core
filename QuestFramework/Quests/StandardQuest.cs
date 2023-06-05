@@ -11,7 +11,6 @@ namespace QuestFramework.Quests
 
         public StandardQuest(string questId, string questKey = "", string typeDefinitionId = "") : base(questId, questKey, typeDefinitionId)
         {
-            Reload();
         }
 
         protected override void InitNetFields(NetFields netFields)
@@ -21,22 +20,22 @@ namespace QuestFramework.Quests
 
         public override bool CanBeCancelled()
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public override int GetDaysLeft()
         {
-            throw new NotImplementedException();
+            return 0;
         }
 
         public override string GetDescription()
         {
-            throw new NotImplementedException();
+            return "Testing description";
         }
 
         public override int GetMoneyReward()
         {
-            throw new NotImplementedException();
+            return 0;
         }
 
         public override string GetName()
@@ -55,17 +54,17 @@ namespace QuestFramework.Quests
 
         public IList<IQuestObjective> GetObjectives()
         {
-            throw new NotImplementedException();
+            return Objectives.ToList<IQuestObjective>();
         }
 
         public override bool HasMoneyReward()
         {
-            throw new NotImplementedException();
+            return GetMoneyReward() > 0;
         }
 
         public override bool HasReward()
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public override bool IsAccepted()
@@ -86,17 +85,17 @@ namespace QuestFramework.Quests
 
         public override void MarkAsViewed()
         {
-            throw new NotImplementedException();
+            ShowNew = false;
         }
 
         public override void OnAccept()
         {
-            throw new NotImplementedException();
+            
         }
 
         public override bool OnLeaveQuestPage()
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public override void OnMoneyRewardClaimed()
@@ -112,6 +111,10 @@ namespace QuestFramework.Quests
         public override bool ShouldDisplayAsComplete()
         {
             return false; // TODO: Testing purposes only
+        }
+
+        protected override void Initialize()
+        {
         }
     }
 }

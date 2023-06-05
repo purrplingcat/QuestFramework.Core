@@ -1,5 +1,5 @@
-﻿using QuestFramework.API;
-using QuestFramework.Extensions;
+﻿using QuestFramework.Extensions;
+using QuestFramework.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -42,6 +42,7 @@ namespace QuestFramework.Game.Menus
                 if (e.NewMenu is QuestLog and not CustomQuestLog)
                 {
                     Game1.activeClickableMenu = new CustomQuestLog();
+                    Logger.Trace("QuestLog menu is overriden by CustomQuestLog menu");
                 }
             };
         }
