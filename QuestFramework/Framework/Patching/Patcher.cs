@@ -17,6 +17,18 @@ namespace QuestFramework.Framework.Patching
                 ?? throw new InvalidOperationException($"Can't find method {GetMethodString(typeof(TTarget), name, parameters, generics)} to patch.");
         }
 
+        protected MethodInfo RequirePropertyGetter<TTarget>(string name)
+        {
+            return AccessTools.PropertyGetter(typeof(TTarget), name)
+                ?? throw new InvalidOperationException($"Can't find property getter {GetMethodString(typeof(TTarget), $"get_{name}")} to patch.");
+        }
+
+        protected MethodInfo RequirePropertySetter<TTarget>(string name)
+        {
+            return AccessTools.PropertySetter(typeof(TTarget), name)
+                ?? throw new InvalidOperationException($"Can't find property setter {GetMethodString(typeof(TTarget), $"set_{name}")} to patch.");
+        }
+
         protected ConstructorInfo RequireConstructor<TTarget>(Type[]? parameters = null)
         {
             return
@@ -26,9 +38,16 @@ namespace QuestFramework.Framework.Patching
 
         protected HarmonyMethod GetHarmonyMethod(string name, int priority = -1, string[]? before = null, string[]? after = null, bool? debug = null)
         {
+            var method = AccessTools.Method(GetType(), name)
+                    ?? throw new InvalidOperationException($"Can't find patcher method {GetMethodString(GetType(), name)}.");
+
+            if (!method.IsStatic)
+            {
+                throw new InvalidOperationException($"Patcher method {GetMethodString(GetType(), name)} must be static.");
+            }
+
             return new HarmonyMethod(
-                AccessTools.Method(GetType(), name)
-                    ?? throw new InvalidOperationException($"Can't find patcher method {GetMethodString(GetType(), name)}."),
+                method,
                 priority, before, after, debug
             );
         }

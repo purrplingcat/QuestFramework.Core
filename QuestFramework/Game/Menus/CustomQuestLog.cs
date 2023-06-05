@@ -21,7 +21,7 @@ namespace QuestFramework.Game.Menus
                 for (int i = manager.Quests.Count - 1; i >= 0; i--)
                 {
                     var quest = manager.Quests[i];
-                    if (!quest.IsHidden())
+                    if (quest != null && !quest.IsHidden())
                     {
                         quests.Add(quest);
                     }

@@ -15,10 +15,18 @@ namespace QuestFramework.Patches
                 original: RequireMethod<Farmer>(nameof(Farmer.addQuest)),
                 prefix: GetHarmonyMethod(nameof(Before_addQuest))
             );
-
             harmony.Patch(
                 original: RequireMethod<Farmer>(nameof(Farmer.removeQuest)),
                 prefix: GetHarmonyMethod(nameof(Before_removeQuest))
+            );
+            harmony.Patch(
+                original: RequireMethod<Farmer>(nameof(Farmer.hasNewQuestActivity)),
+                postfix: GetHarmonyMethod(nameof(After_hasNewQuestActivity))
+            );
+            // TODO: Farmer.visibleQuestCount vill be replaced in next build! Don't forget to change or remove when it happens!
+            harmony.Patch(
+                original: RequirePropertyGetter<Farmer>(nameof(Farmer.visibleQuestCount)),
+                postfix: GetHarmonyMethod(nameof(After_visibleQuestCount_get))
             );
         }
 
@@ -42,6 +50,35 @@ namespace QuestFramework.Patches
             }
 
             return true;
+        }
+
+        private static void After_hasNewQuestActivity(ref bool __result)
+        {
+            var manager = Game1.player.GetQuestManager();
+
+            if (manager == null) { return; }
+
+            foreach (var q in manager.Quests)
+            {
+                if (q == null) { continue; }
+
+                if (!q.IsHidden() && (q.ShouldDisplayAsNew() || q.ShouldDisplayAsComplete()))
+                {
+                    __result = true;
+                    return;
+                }
+            }
+        }
+
+        [Obsolete("Farmer.visibleQuestCount vill be replaced in next build!")]
+        private static void After_visibleQuestCount_get(ref int __result)
+        {
+            var manager = Game1.player.GetQuestManager();
+
+            if (manager != null)
+            {
+                __result += manager.Quests.Count;
+            }
         }
     }
 }
