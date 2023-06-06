@@ -24,6 +24,9 @@ namespace QuestFramework
 
         [AllowNull]
         internal static QuestSaveManager SaveManager { get; private set; }
+        
+        [AllowNull]
+        internal static IReflectionHelper Reflection { get; private set; }
 
         public static QuestFrameworkConfig Config { get; private set; } = new();
 
@@ -34,6 +37,7 @@ namespace QuestFramework
             JsonTypesManager.RegisterTypesFromAssembly(GetType().Assembly);
             EventCommands.RegisterCommands(ModManifest.UniqueID);
 
+            Reflection = helper.Reflection;
             Config = helper.ReadConfig<QuestFrameworkConfig>();
             Synchronizer = new QuestSynchronizer(helper.Events, helper.Multiplayer, helper.Translation, ModManifest);
             SaveManager = new QuestSaveManager(_jsonSerializerSettings, helper.Data, ModManifest);

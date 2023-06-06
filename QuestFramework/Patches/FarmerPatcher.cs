@@ -25,8 +25,8 @@ namespace QuestFramework.Patches
             );
             // TODO: Farmer.visibleQuestCount vill be replaced in next build! Don't forget to change or remove when it happens!
             harmony.Patch(
-                original: RequirePropertyGetter<Farmer>(nameof(Farmer.visibleQuestCount)),
-                postfix: GetHarmonyMethod(nameof(After_visibleQuestCount_get))
+                original: RequirePropertyGetter<Farmer>(nameof(Farmer.hasVisibleQuests)),
+                postfix: GetHarmonyMethod(nameof(After_get_hasVisibleQuests))
             );
         }
 
@@ -71,13 +71,20 @@ namespace QuestFramework.Patches
         }
 
         [Obsolete("Farmer.visibleQuestCount vill be replaced in next build!")]
-        private static void After_visibleQuestCount_get(ref int __result)
+        private static void After_get_hasVisibleQuests(ref bool __result)
         {
             var manager = Game1.player.GetQuestManager();
 
-            if (manager != null)
+            if (manager == null)
+                return;
+
+            foreach (var quest in manager.Quests)
             {
-                __result += manager.Quests.Count;
+                if (quest != null && !quest.IsHidden())
+                {
+                    __result = true;
+                    return;
+                }
             }
         }
     }
