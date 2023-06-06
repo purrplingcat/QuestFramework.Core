@@ -7,10 +7,16 @@ namespace QuestFramework.Quests.Providers
     {
         public ICustomQuest? CreateQuest(IQuestMetadata metadata)
         {
-            var quest = new StandardQuest(metadata.QualifiedId, metadata.LocalId, metadata.TypeIdentifier);
+            var quest = new StandardQuest(metadata.QualifiedId, metadata.LocalId, metadata.TypeIdentifier)
+            {
+                Name = "[Test]",
+                Description = "[Description]",
+            };
 
-            var co = new CustomObjective();
-            co.Description = "Test objective";
+            var co = new CustomObjective
+            {
+                Description = "Test objective [Season]"
+            };
             co.modData["test"] = "testing";
             quest.Objectives.Add(co);
             quest.ShowNew = true;

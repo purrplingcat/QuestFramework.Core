@@ -15,12 +15,14 @@ namespace QuestFramework.Game.Menus
     internal class CustomQuestLog : QuestLog, IQuestMenu
     {
         private IQuest? _previousQuest;
+        protected IList<IQuestObjective> _objectives = new List<IQuestObjective>();
 
+        private static IReflectionHelper Reflection => QuestFrameworkMod.Reflection;
         public static SortedSet<IQuestRenderer> Renderers { get; }
 
         private IQuestRenderer? _renderer;
 
-        private string HoverText => QuestFrameworkMod.Reflection
+        private string HoverText => Reflection
             .GetField<string>(this, "hoverText")
             .GetValue();
 
@@ -69,6 +71,9 @@ namespace QuestFramework.Game.Menus
             {
                 _previousQuest = _shownQuest;
                 _renderer = null;
+                _objectives = _shownQuest is IHaveObjectives haveObjectives 
+                    ? haveObjectives.GetObjectives() 
+                    : new List<IQuestObjective>();
 
                 if (_shownQuest is not ICustomQuest quest)
                     return;
@@ -150,6 +155,19 @@ namespace QuestFramework.Game.Menus
                     Logger.Trace("QuestLog menu is overriden by CustomQuestLog menu");
                 }
             };
+        }
+
+        public IQuest? GetCurrentQuest()
+        {
+            if (questPage != -1)
+                return _shownQuest;
+
+            return null;
+        }
+
+        public IList<IQuestObjective> GetCurrentObjectives()
+        {
+            return _objectives;
         }
     }
 }

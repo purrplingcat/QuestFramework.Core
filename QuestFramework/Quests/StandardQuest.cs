@@ -28,33 +28,9 @@ namespace QuestFramework.Quests
             return 0;
         }
 
-        public override string GetDescription()
-        {
-            return "Testing description";
-        }
-
         public override int GetMoneyReward()
         {
             return 0;
-        }
-
-        public override string GetName()
-        {
-            return questKey.Value;
-        }
-
-        public override List<string> GetObjectiveDescriptions()
-        {
-            return Objectives
-                .Select(o => o.ShouldShowProgress() 
-                    ? $"{o.GetDescription()} ({o.GetCount()}/{o.GetRequiredCount()})" 
-                    : o.GetDescription())
-                .ToList();
-        }
-
-        public IList<IQuestObjective> GetObjectives()
-        {
-            return Objectives.ToList<IQuestObjective>();
         }
 
         public override bool HasMoneyReward()

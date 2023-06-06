@@ -13,6 +13,7 @@ namespace QuestFramework.API
         void SetCount(int count);
         void IncrementCount(int amount);
         bool IsComplete();
+        bool IsHidden();
         string GetDescription();
         bool ShouldShowProgress();
     }

@@ -17,26 +17,34 @@ namespace QuestFramework.Quests.Objectives
         protected readonly NetInt requiredCount = new(1);
         protected readonly NetString conditionsQueryString = new();
         protected readonly NetString description = new();
+        protected readonly NetBool active = new(true);
 
-        [JsonProperty("CurrentCount")]
+        [JsonProperty]
         public int CurrentCount
         {
             get => currentCount.Value; 
             set => currentCount.Value = value;
         }
 
-        [JsonProperty("RequiredCount")]
+        [JsonProperty]
         public int RequiredCount
         {
             get => requiredCount.Value;
             set => requiredCount.Value = value;
         }
 
-        [JsonProperty("Description")]
+        [JsonProperty]
         public string Description
         {
             get => description.Value;
             set => description.Value = value;
+        }
+
+        [JsonProperty]
+        public bool Active 
+        { 
+            get => active.Value; 
+            set => active.Value = value; 
         }
 
         [JsonIgnore]
@@ -109,7 +117,7 @@ namespace QuestFramework.Quests.Objectives
 
         public string GetDescription()
         {
-            return TokenParser.ParseText(Description);
+            return Description;
         }
 
         public int GetCount() => CurrentCount;
@@ -117,6 +125,7 @@ namespace QuestFramework.Quests.Objectives
         public int GetRequiredCount() => RequiredCount;
 
         public bool IsComplete() => _complete;
+        public bool IsHidden() => !Active;
 
         public void IncrementCount(int amount) => SetCount(CurrentCount + amount);
 

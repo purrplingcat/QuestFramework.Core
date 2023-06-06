@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 
 namespace QuestFramework.Quests
 {
-    public abstract class CustomQuest : ICustomQuest, IDisposable
+    public abstract class CustomQuest : ICustomQuest
     {
         public enum QuestState
         {
@@ -20,11 +20,16 @@ namespace QuestFramework.Quests
         protected readonly NetString id = new();
         protected readonly NetString questKey = new("");
         protected readonly NetString typeDefinitionId = new("");
+        protected readonly NetString name = new();
+        protected readonly NetString description = new();
         protected readonly NetEnum<QuestState> state = new(QuestState.InProgress);
         protected readonly NetObjectList<QuestObjective> objectives = new();
         protected readonly NetBool showNew = new();
+        protected readonly NetString preconditionsQueryString = new();
+        protected readonly NetString preconditionsDescription = new();
         protected bool _objectivesRegistrationDirty;
-        private bool _disposedValue;
+        protected string? _translatedDescription;
+        protected string? _translatedName;
 
         [JsonProperty("Id")]
         public string Id
@@ -47,6 +52,20 @@ namespace QuestFramework.Quests
             set => typeDefinitionId.Value = value;
         }
 
+        [JsonProperty("Name")]
+        public string Name
+        {
+            get => name.Value;
+            set => name.Value = value;
+        }
+
+        [JsonProperty("Description")]
+        public string Description
+        {
+            get => description.Value;
+            set => description.Value = value;
+        }
+
         [JsonProperty("State")]
         public QuestState State
         {
@@ -59,6 +78,20 @@ namespace QuestFramework.Quests
         {
             get => showNew.Value;
             set => showNew.Value = value;
+        }
+
+        [JsonProperty("PreconditionsQuery")]
+        public string PreconditionsQueryString
+        {
+            get => preconditionsQueryString.Value;
+            set => preconditionsQueryString.Value = value;
+        }
+
+        [JsonProperty("PreconditionsDescription")]
+        public string PreconditionsDescription
+        {
+            get => preconditionsDescription.Value;
+            set => preconditionsDescription.Value = value;
         }
 
         [JsonIgnore]
@@ -108,10 +141,7 @@ namespace QuestFramework.Quests
             };
         }
 
-        public abstract string GetName();
         public abstract bool IsAccepted();
-        public abstract string GetDescription();
-        public abstract List<string> GetObjectiveDescriptions();
         public abstract bool CanBeCancelled();
         public abstract void MarkAsViewed();
         public abstract bool ShouldDisplayAsComplete();
@@ -126,6 +156,20 @@ namespace QuestFramework.Quests
         public abstract void OnAccept();
         public abstract bool Reload();
         protected abstract void Initialize();
+
+        public string GetName()
+        {
+            _translatedName ??= TranslateToken(Name);
+
+            return _translatedName;
+        }
+
+        public string GetDescription()
+        {
+            _translatedDescription ??= TranslateToken(Description);
+
+            return _translatedDescription;
+        }
 
         public virtual bool ShouldDisplayAsNew()
         {
@@ -184,7 +228,8 @@ namespace QuestFramework.Quests
         {
             foreach (var objective in objectives) 
             {
-                objective.OnMessage(questMessage);
+                if (objective.IsRegistered && !objective.IsHidden())
+                    objective.OnMessage(questMessage);
             }
         }
 
@@ -236,32 +281,40 @@ namespace QuestFramework.Quests
             OnCanceled();
         }
 
-        protected virtual void Dispose(bool disposing)
+        public virtual List<string> GetObjectiveDescriptions()
         {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects)
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
-                _disposedValue = true;
-            }
+            return Objectives
+                .Where(o => !o.IsHidden())
+                .Select(o => o.ShouldShowProgress() 
+                    ? $"{TranslateToken(o.GetDescription())} ({o.GetCount()}/{o.GetRequiredCount()})" 
+                    : TranslateToken(o.GetDescription()))
+                .ToList();
         }
 
-        // ~CustomQuest()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
-
-        public void Dispose()
+        public IList<IQuestObjective> GetObjectives()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            return Objectives
+                .Where(o => !o.IsHidden())
+                .ToList<IQuestObjective>();
+        }
+
+        public virtual string TranslateToken(string text)
+        {
+            return TokenParser.ParseText(text.Trim(), customParser: Translate);
+        }
+
+        private bool Translate(string[] query, out string replacement, Random random, Farmer player)
+        {
+            if (query.Length > 0)
+            {
+                string key = $"Strings\\Quests:{query[0]}";
+                replacement = Game1.content.LoadString(key);
+
+                return replacement != key;
+            }
+
+            replacement = "";
+            return false;
         }
     }
 }
