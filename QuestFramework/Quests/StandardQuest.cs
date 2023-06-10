@@ -5,7 +5,7 @@ using QuestFramework.API;
 namespace QuestFramework.Quests
 {
     [JsonType("Standard")]
-    public class StandardQuest : CustomQuest, IHaveObjectives
+    public class StandardQuest : CustomQuest
     {
         public StandardQuest() { }
 

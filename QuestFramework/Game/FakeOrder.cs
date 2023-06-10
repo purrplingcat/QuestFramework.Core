@@ -8,6 +8,7 @@ namespace QuestFramework.Game
 {
     internal class FakeOrder : SpecialOrder
     {
+        private bool _subscribed;
         public static FakeOrder? Me { get; private set; }
 
         public static void Install()
@@ -18,6 +19,7 @@ namespace QuestFramework.Game
 
             if (!Game1.player.team.specialOrders.Contains(Me))
             {
+                Me.SubscribeEvents();
                 Me.dueDate.Value = int.MaxValue;
                 Game1.player.team.specialOrders.Add(Me);
             }
@@ -40,6 +42,11 @@ namespace QuestFramework.Game
 
         public override void Update()
         {
+            if (!_subscribed)
+            {
+                SubscribeEvents();
+            }
+
             if (questState.Value != QuestState.InProgress)
             {
                 questState.Value = QuestState.InProgress;
@@ -53,6 +60,9 @@ namespace QuestFramework.Game
 
         public void SubscribeEvents()
         {
+            if (_subscribed) { return; }
+
+            _subscribed = true;
             onFishCaught += OnFishCaught;
             onGiftGiven += OnGiftGiven;
             onItemCollected += OnItemCollected;

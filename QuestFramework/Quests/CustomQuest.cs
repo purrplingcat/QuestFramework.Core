@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 
 namespace QuestFramework.Quests
 {
-    public abstract class CustomQuest : ICustomQuest
+    public abstract class CustomQuest : ICustomQuest, IHaveObjectives
     {
         public enum QuestState
         {

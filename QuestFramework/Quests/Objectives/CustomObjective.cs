@@ -15,6 +15,7 @@ namespace QuestFramework.Quests.Objectives
         public delegate void CustomObjectiveDelegate(IQuestObjective objective, IQuestMessage message, ModDataDictionary data, ICustomQuest quest);
 
         private readonly NetString handlerMethod = new();
+        private readonly NetBool showProgress = new();
 
         [JsonIgnore]
         public ModDataDictionary modData { get; } = new ModDataDictionary();
@@ -33,6 +34,13 @@ namespace QuestFramework.Quests.Objectives
             set => handlerMethod.Value = value;
         }
 
+        [JsonProperty]
+        public bool ShowProgress
+        {
+            get => showProgress.Value;
+            set => showProgress.Value = value;
+        }
+
         protected override void InitNetFields()
         {
             base.InitNetFields();
@@ -42,8 +50,13 @@ namespace QuestFramework.Quests.Objectives
                 .AddField(modData, "modData");
         }
 
-        public override void Load(ICustomQuest quest, Dictionary<string, string> data)
+        public override void Load(CustomQuest quest, Dictionary<string, string> data)
         {
+            if (data.TryGetValue("ShowProgress", out var rawValue) && rawValue.ToLowerInvariant() == "true")
+            {
+                showProgress.Value = true;
+            }
+
             foreach (var item in data)
             {
                 modData[item.Key] = item.Value;
@@ -61,6 +74,11 @@ namespace QuestFramework.Quests.Objectives
             }
 
             Logger.Warn(error);
+        }
+
+        public override bool ShouldShowProgress()
+        {
+            return ShowProgress;
         }
     }
 }

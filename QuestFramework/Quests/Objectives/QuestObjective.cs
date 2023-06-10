@@ -12,12 +12,20 @@ namespace QuestFramework.Quests.Objectives
     public abstract class QuestObjective : IQuestObjective, INetObject<NetFields>
     {
         protected bool _complete;
-        protected ICustomQuest? _quest;
+        protected CustomQuest? _quest;
+        protected readonly NetString id = new();
         protected readonly NetInt currentCount = new(0);
         protected readonly NetInt requiredCount = new(1);
         protected readonly NetString conditionsQueryString = new();
         protected readonly NetString description = new();
-        protected readonly NetBool active = new(true);
+        protected readonly NetStringList requiredObjectives = new();
+
+        [JsonProperty]
+        public string Id
+        {
+            get => id.Value;
+            set => id.Value = value;
+        }
 
         [JsonProperty]
         public int CurrentCount
@@ -41,10 +49,10 @@ namespace QuestFramework.Quests.Objectives
         }
 
         [JsonProperty]
-        public bool Active 
+        public IList<string> RequiredObjectives 
         { 
-            get => active.Value; 
-            set => active.Value = value; 
+            get => requiredObjectives;
+            set => requiredObjectives.Set(value); 
         }
 
         [JsonIgnore]
@@ -125,11 +133,29 @@ namespace QuestFramework.Quests.Objectives
         public int GetRequiredCount() => RequiredCount;
 
         public bool IsComplete() => _complete;
-        public bool IsHidden() => !Active;
+        
+        public bool IsHidden()
+        {
+            if (!IsRegistered)
+                return true;
 
-        public void IncrementCount(int amount) => SetCount(CurrentCount + amount);
+            if (_quest != null && RequiredObjectives.Any())
+            {
+                foreach (var objective in _quest.Objectives)
+                {
+                    if (RequiredObjectives.Contains(objective.Id) && !objective.IsComplete())
+                    {
+                        return true;
+                    }
+                }
+            }
 
-        public void SetCount(int count)
+            return false;
+        }
+
+        public virtual void IncrementCount(int amount) => SetCount(CurrentCount + amount);
+
+        public virtual void SetCount(int count)
         {
             int newCount = Math.Max(0, Math.Min(count, RequiredCount));
 
@@ -144,7 +170,7 @@ namespace QuestFramework.Quests.Objectives
             return false;
         }
 
-        public void Register(ICustomQuest quest)
+        public void Register(CustomQuest quest)
         {
             _quest = quest;
             OnRegister();
@@ -165,7 +191,7 @@ namespace QuestFramework.Quests.Objectives
         {
         }
 
-        public abstract void Load(ICustomQuest quest, Dictionary<string, string> data);
+        public abstract void Load(CustomQuest quest, Dictionary<string, string> data);
         protected abstract void HandleMessage(IQuestMessage questMessage);
 
         public void OnMessage(IQuestMessage questMessage)

@@ -8,6 +8,7 @@ namespace QuestFramework.API
 {
     public interface IQuestObjective
     {
+        string Id { get; }
         int GetCount();
         int GetRequiredCount();
         void SetCount(int count);

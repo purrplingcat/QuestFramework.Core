@@ -39,7 +39,7 @@ namespace QuestFramework
 
             Reflection = helper.Reflection;
             Config = helper.ReadConfig<QuestFrameworkConfig>();
-            Synchronizer = new QuestSynchronizer(helper.Events, helper.Multiplayer, helper.Translation, ModManifest);
+            Synchronizer = new QuestSynchronizer(this);
             SaveManager = new QuestSaveManager(_jsonSerializerSettings, helper.Data, ModManifest);
 
             HarmonyPatcher.Apply(this, new Patcher[] {

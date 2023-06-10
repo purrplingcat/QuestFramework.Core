@@ -11,17 +11,16 @@ namespace QuestFramework.Framework.Networking
         private const string MSG_SYNC = "SYNC_QUESTS";
 
         private readonly IMultiplayerHelper _multiplayer;
-        private readonly ITranslationHelper _translation;
         private readonly IManifest _manifest;
 
         private static QuestFrameworkConfig Config => QuestFrameworkMod.Config;
 
-        public QuestSynchronizer(IModEvents events, IMultiplayerHelper multiplayer, ITranslationHelper translation, IManifest manifest)
+        public QuestSynchronizer(Mod mod)
         {
-            _multiplayer = multiplayer;
-            _translation = translation;
-            _manifest = manifest;
+            _multiplayer = mod.Helper.Multiplayer;
+            _manifest = mod.ModManifest;
 
+            var events = mod.Helper.Events;
             events.Multiplayer.PeerConnected += OnPeerConnected;
             events.Multiplayer.ModMessageReceived += OnMultiplayerMessageReceived;
             events.GameLoop.UpdateTicked += OnGameUpdated;
@@ -29,21 +28,15 @@ namespace QuestFramework.Framework.Networking
 
         private void OnPeerConnected(object? sender, PeerConnectedEventArgs e)
         {
-            if (!Context.IsMainPlayer) { return; }
-
             var mod = e.Peer.GetMod(_multiplayer.ModID);
 
             if (mod == null || !mod.Version.Equals(_manifest.Version))
             {
-                Game1.Multiplayer.sendChatMessage(
-                    LocalizedContentManager.CurrentLanguageCode,
-                    _translation.Get(
-                        "multiplayer.missMatchVersion",
-                        new { ClientVersion = mod?.Version, ServerVersion = _manifest.Version }),
-                    e.Peer.PlayerID);
                 Logger.Error($"Mismatch Quest Framework version for peer ${e.Peer.PlayerID}: {mod?.Version} != {_manifest.Version}");
                 return;
             }
+
+            if (!Context.IsMainPlayer) { return; }
 
             Farmer farmer = Game1.getFarmer(e.Peer.PlayerID);
             if (farmer == null) return;
@@ -114,7 +107,7 @@ namespace QuestFramework.Framework.Networking
                 }
             }
 
-            if (!Context.IsMainPlayer && e.IsMultipleOf(5))
+            if (!Context.IsMainPlayer && e.IsMultipleOf(Config.DeltaBroadcastPeriod))
             {
                 if (QuestManager.Managers.Roots.TryGetValue(Game1.player.UniqueMultiplayerID, out var localManager))
                 {
