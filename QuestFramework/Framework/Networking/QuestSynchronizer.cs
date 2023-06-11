@@ -36,15 +36,9 @@ namespace QuestFramework.Framework.Networking
         {
             if (!Context.IsWorldReady) { return; }
 
-            foreach ((long peerId, NetRoot<QuestManager> peer) in Peers.Roots)
+            foreach (var peer in Peers.Roots.Values)
             {
-                peer.Clock.InterpolationTicks = Game1.Multiplayer.interpolationTicks();
-                Game1.Multiplayer.updateRoot(peer);
-
-                if (Context.IsMainPlayer)
-                {
-                    SendDelta(peer, peerId);
-                }
+                peer.Disconnect(e.Peer.PlayerID);
             }
         }
 
