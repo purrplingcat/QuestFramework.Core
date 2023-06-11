@@ -4,7 +4,7 @@ namespace QuestFramework.API
 {
     public interface IQuestManager
     {
-        long RefId { get; }
+        long PlayerId { get; }
         Farmer Player { get; }
         IList<ICustomQuest> Quests { get; }
         bool IsActive { get; }

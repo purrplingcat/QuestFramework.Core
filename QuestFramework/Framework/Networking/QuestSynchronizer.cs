@@ -2,7 +2,9 @@
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Locations;
 using static QuestFramework.Framework.Networking.QuestSyncMessage;
+using static StardewValley.Menus.CharacterCustomization;
 
 namespace QuestFramework.Framework.Networking
 {
@@ -62,32 +64,34 @@ namespace QuestFramework.Framework.Networking
 
             if (!Peers.ContainsKey(e.Peer.PlayerID))
             {
-                AddPeer(e.Peer.PlayerID, new QuestManager(farmer));
+                Peers.Add(e.Peer.PlayerID, new QuestManager(farmer));
             }
+
+            Introduce(Peers.Roots[e.Peer.PlayerID], e.Peer.PlayerID);
 
             foreach (var peer in Peers.Roots)
             {
-                var msg = new QuestSyncMessage(Game1.Multiplayer.writeObjectFullBytes(peer.Value, e.Peer.PlayerID), peer.Key)
-                {
-                    Type = SyncType.FULL
-                };
+                var msg = new QuestSyncMessage(
+                    Game1.Multiplayer.writeObjectFullBytes(peer.Value, e.Peer.PlayerID), 
+                    peer.Key, 
+                    SyncType.FULL
+                );
 
                 _multiplayer.SendMessage(msg, MSG_TYPE, toMods, toPlayers);
                 Logger.Trace($"(SYNC) Sent Quest Manager full data of playerID {msg.PeerId} to {string.Join(" ,", toPlayers)}");
             }
         }
 
-        public void AddPeer(long peerId, QuestManager manager)
+        private void Introduce(NetRoot<QuestManager> peer, long peerId)
         {
-            Peers.Add(peerId, manager);
+            var msg = new QuestSyncMessage(
+                Game1.Multiplayer.writeObjectFullBytes(peer, peerId), 
+                peer.Value.PlayerId, 
+                SyncType.FULL
+            );
 
-            var msg = new QuestSyncMessage(Game1.Multiplayer.writeObjectFullBytes(Peers.Roots[peerId], peerId), peerId)
-            {
-                Type = SyncType.FULL
-            };
-
-            _multiplayer.SendMessage(msg, MSG_TYPE, new string[] { _manifest.UniqueID });
-            Logger.Trace($"(SYNC) Sent newly added Quest Manager for playerID {msg.PeerId} to all connected peers");
+            SendMessage(msg);
+            Logger.Trace($"(SYNC) Sent Quest Manager full data of playerID {msg.PeerId} to all players");
         }
 
         private void OnMultiplayerMessageReceived(object? sender, ModMessageReceivedEventArgs e)
@@ -98,16 +102,28 @@ namespace QuestFramework.Framework.Networking
 
                 switch (msg.Type)
                 {
-                    case QuestSyncMessage.SyncType.FULL:
+                    case SyncType.FULL:
                         ReadFull(e.FromPlayerID, msg.PeerId, msg.AsReader());
                         break;
-                    case QuestSyncMessage.SyncType.DELTA:
+                    case SyncType.DELTA:
                         ReadDelta(e.FromPlayerID, msg.PeerId, msg.AsReader());
                         break;
-                    case QuestSyncMessage.SyncType.DISPOSE:
+                    case SyncType.CREATE:
+                        ReadCreate(e.FromPlayerID, msg.PeerId); 
+                        break;
+                    case SyncType.DISPOSE:
                         ReadDispose(e.FromPlayerID, msg.PeerId);
                         break;
                 }
+            }
+        }
+
+        private void ReadCreate(long sourceId, long peerId)
+        {
+            if (!Peers.ContainsKey(peerId))
+            {
+                Peers.Add(peerId, new QuestManager(peerId));
+                Logger.Trace($"(SYNC) Received Quest Manager create request for playerID: {peerId} Source player: {sourceId}");
             }
         }
 
@@ -172,8 +188,12 @@ namespace QuestFramework.Framework.Networking
         {
             if (Context.IsMultiplayer && root.Dirty)
             {
-                var msg = new QuestSyncMessage(Game1.Multiplayer.writeObjectDeltaBytes(root), playerId);
-                _multiplayer.SendMessage(msg, MSG_TYPE, new string[] { _manifest.UniqueID });
+                var msg = new QuestSyncMessage(
+                    Game1.Multiplayer.writeObjectDeltaBytes(root), 
+                    playerId, 
+                    SyncType.DELTA
+                );
+                SendMessage(msg);
                 root.MarkClean();
                 Logger.Trace($"(SYNC) Sent delta update for Quest Manager playerID: {msg.PeerId}");
             }
@@ -187,33 +207,26 @@ namespace QuestFramework.Framework.Networking
             {
                 if (Peers.ContainsKey(key))
                 {
-                    AddPeer(key, new QuestManager(farmer));
+                    Peers.Add(key, new QuestManager(farmer));
+                    SendMessage(new QuestSyncMessage(Array.Empty<byte>(), key, SyncType.CREATE));
                 }
             };
             Game1.netWorldState.Value.farmhandData.OnValueRemoved += (long key, Farmer value) =>
             {
                 if (Peers.ContainsKey(key))
                 {
-                    RemovePeer(key);
+                    Peers.Remove(key);
+                    SendMessage(new QuestSyncMessage(Array.Empty<byte>(), key, SyncType.DISPOSE));
                 }
             };
         }
 
-        public void RemovePeer(long peerId)
+        protected void SendMessage(QuestSyncMessage message)
         {
-            if (Peers[peerId] is IDisposable disposable)
+            if (Context.IsMultiplayer)
             {
-                disposable.Dispose();
+                _multiplayer.SendMessage(message, MSG_TYPE, new string[] { _manifest.UniqueID });
             }
-
-            Peers.Remove(peerId);
-
-            var msg = new QuestSyncMessage(Array.Empty<byte>(), peerId)
-            {
-                Type = SyncType.DISPOSE
-            };
-            _multiplayer.SendMessage(msg, MSG_TYPE, new string[] { _manifest.UniqueID });
-            Logger.Trace($"(SYNC) Disposal request sent for Quest Manager for playerID {msg.PeerId} to all connected peers");
         }
     }
 }

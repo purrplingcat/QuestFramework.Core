@@ -6,6 +6,7 @@
         {
             DELTA,
             FULL,
+            CREATE,
             DISPOSE,
         }
 
@@ -13,10 +14,11 @@
         public byte[] Data { get; set; }
         public long PeerId { get; set; }
 
-        public QuestSyncMessage(byte[] data, long peerId)
+        public QuestSyncMessage(byte[] data, long peerId, SyncType type)
         {
             Data = data;
             PeerId = peerId;
+            Type = type;
         }
 
         public BinaryReader AsReader()

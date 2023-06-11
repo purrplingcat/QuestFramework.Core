@@ -33,7 +33,7 @@ namespace QuestFramework.Framework
             }
         }
 
-        public long RefId => _farmerID.Value;
+        public long PlayerId => _farmerID.Value;
         public Farmer Player => Game1.getFarmerMaybeOffline(_farmerID.Value);
         public bool IsActive => Player == Game1.player;
 
@@ -42,9 +42,13 @@ namespace QuestFramework.Framework
         public IList<ICustomQuest> Quests => _quests;
         public IList<string> Rules => _rules;
 
-        public QuestManager(Farmer player) : this()
+        public QuestManager(Farmer player) : this(player.UniqueMultiplayerID)
         {
-            _farmerID.Value = player.UniqueMultiplayerID;
+        }
+
+        public QuestManager(long playerId) : this()
+        {
+            _farmerID.Value = playerId;
         }
 
         static QuestManager()
