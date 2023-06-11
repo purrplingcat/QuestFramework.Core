@@ -39,7 +39,7 @@ namespace QuestFramework
 
             Reflection = helper.Reflection;
             Config = helper.ReadConfig<QuestFrameworkConfig>();
-            Synchronizer = new QuestSynchronizer(this);
+            Synchronizer = new QuestSynchronizer(this, QuestManager.Managers);
             SaveManager = new QuestSaveManager(_jsonSerializerSettings, helper.Data, ModManifest);
 
             HarmonyPatcher.Apply(this, new Patcher[] {
@@ -115,7 +115,6 @@ namespace QuestFramework
         {
             if (!Context.IsMainPlayer) { return; }
 
-            QuestSaveManager.HookOnFarmerAddedOrRemoved();
             SaveManager.LoadState();
         }
 

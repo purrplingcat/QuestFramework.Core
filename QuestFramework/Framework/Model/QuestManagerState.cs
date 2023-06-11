@@ -8,5 +8,6 @@ namespace QuestFramework.Framework.Model
     {
         [JsonProperty(ItemConverterType = typeof(QuestConverter<ICustomQuest>))]
         public List<ICustomQuest> Quests { get; set; } = new();
+        public List<string> Rules { get; set; } = new();
     }
 }

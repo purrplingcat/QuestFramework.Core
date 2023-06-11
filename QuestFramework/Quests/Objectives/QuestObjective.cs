@@ -3,11 +3,14 @@ using Netcode;
 using Newtonsoft.Json;
 using QuestFramework.API;
 using QuestFramework.Framework.Converters;
+using QuestFramework.Quests.Data;
 using StardewValley;
 
 namespace QuestFramework.Quests.Objectives
 {
     [JsonConverter(typeof(QuestConverter<QuestObjective>))]
+    [JsonTypeInclude(typeof(CollectObjective), "Collect")]
+    [JsonTypeInclude(typeof(SlayObjective), "Slay")]
     [JsonTypeInclude(typeof(CustomObjective), "Custom")]
     public abstract class QuestObjective : IQuestObjective, INetObject<NetFields>
     {
@@ -52,7 +55,7 @@ namespace QuestFramework.Quests.Objectives
         public IList<string> RequiredObjectives 
         { 
             get => requiredObjectives;
-            set => requiredObjectives.Set(value); 
+            set => requiredObjectives.CopyFrom(value); 
         }
 
         [JsonIgnore]
@@ -167,7 +170,7 @@ namespace QuestFramework.Quests.Objectives
 
         public virtual bool ShouldShowProgress()
         {
-            return false;
+            return true;
         }
 
         public void Register(CustomQuest quest)
@@ -192,14 +195,26 @@ namespace QuestFramework.Quests.Objectives
         }
 
         public abstract void Load(CustomQuest quest, Dictionary<string, string> data);
-        protected abstract void HandleMessage(IQuestMessage questMessage);
+        protected abstract void HandleQuestMessage(IQuestMessage questMessage);
 
         public void OnMessage(IQuestMessage questMessage)
         {
             if (CheckConditions(questMessage))
             {
-                HandleMessage(questMessage);
+                HandleQuestMessage(questMessage);
             }
+        }
+
+        public static bool TryReadMessage<TMessage>(in IQuestMessage questMessage, out TMessage message, string? type = null) where TMessage : class
+        {
+            message = default!;
+
+            if (type != null && questMessage.Type != type)
+                return false;
+
+            message = questMessage.ReadAs<TMessage>()!;
+
+            return message != null;
         }
     }
 }

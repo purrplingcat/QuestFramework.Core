@@ -5,17 +5,18 @@
         public enum SyncType
         {
             DELTA,
-            FULL
+            FULL,
+            DISPOSE,
         }
 
         public SyncType Type { get; set; }
         public byte[] Data { get; set; }
-        public long FarmerID { get; set; }
+        public long PeerId { get; set; }
 
-        public QuestSyncMessage(byte[] data, long farmerID)
+        public QuestSyncMessage(byte[] data, long peerId)
         {
             Data = data;
-            FarmerID = farmerID;
+            PeerId = peerId;
         }
 
         public BinaryReader AsReader()

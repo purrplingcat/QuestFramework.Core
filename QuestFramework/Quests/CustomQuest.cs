@@ -159,14 +159,14 @@ namespace QuestFramework.Quests
 
         public string GetName()
         {
-            _translatedName ??= TranslateToken(Name);
+            _translatedName ??= ParseAndLocalizeText(Name);
 
             return _translatedName;
         }
 
         public string GetDescription()
         {
-            _translatedDescription ??= TranslateToken(Description);
+            _translatedDescription ??= ParseAndLocalizeText(Description);
 
             return _translatedDescription;
         }
@@ -286,8 +286,8 @@ namespace QuestFramework.Quests
             return Objectives
                 .Where(o => !o.IsHidden())
                 .Select(o => o.ShouldShowProgress() 
-                    ? $"{TranslateToken(o.GetDescription())} ({o.GetCount()}/{o.GetRequiredCount()})" 
-                    : TranslateToken(o.GetDescription()))
+                    ? $"{ParseAndLocalizeText(o.GetDescription())} ({o.GetCount()}/{o.GetRequiredCount()})" 
+                    : ParseAndLocalizeText(o.GetDescription()))
                 .ToList();
         }
 
@@ -298,12 +298,12 @@ namespace QuestFramework.Quests
                 .ToList<IQuestObjective>();
         }
 
-        public virtual string TranslateToken(string text)
+        public virtual string ParseAndLocalizeText(string text)
         {
-            return TokenParser.ParseText(text.Trim(), customParser: Translate);
+            return TokenParser.ParseText(text.Trim(), customParser: Localize);
         }
 
-        private bool Translate(string[] query, out string replacement, Random random, Farmer player)
+        private bool Localize(string[] query, out string replacement, Random random, Farmer player)
         {
             if (query.Length > 0)
             {
@@ -315,6 +315,11 @@ namespace QuestFramework.Quests
 
             replacement = "";
             return false;
+        }
+
+        public virtual string Parse(string rawValue)
+        {
+            return ParseAndLocalizeText(rawValue);
         }
     }
 }

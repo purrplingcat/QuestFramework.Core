@@ -63,7 +63,7 @@ namespace QuestFramework.Quests.Objectives
             }
         }
 
-        protected override void HandleMessage(IQuestMessage questMessage)
+        protected override void HandleQuestMessage(IQuestMessage questMessage)
         {
             if (_quest == null) { return; }
 

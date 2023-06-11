@@ -12,6 +12,7 @@ namespace QuestFramework.Framework
     {
         private readonly NetObjectList<ICustomQuest> _quests = new();
         private readonly NetLong _farmerID = new();
+        private readonly NetStringList _rules = new();
         private bool _disposedValue;
 
         public static NetRootDictionary<long, QuestManager> Managers { get; } = new();
@@ -39,6 +40,7 @@ namespace QuestFramework.Framework
         public NetFields NetFields { get; }
 
         public IList<ICustomQuest> Quests => _quests;
+        public IList<string> Rules => _rules;
 
         public QuestManager(Farmer player) : this()
         {
@@ -184,6 +186,8 @@ namespace QuestFramework.Framework
         public void LoadFromState(QuestManagerState managerState)
         {
             _quests.Clear();
+            _rules.Clear();
+            _rules.CopyFrom(managerState.Rules);
             
             foreach(var quest in managerState.Quests)
             {
@@ -199,6 +203,7 @@ namespace QuestFramework.Framework
             return new QuestManagerState()
             {
                 Quests = _quests.ToList(),
+                Rules = _rules.ToList(),
             };
         }
 
