@@ -31,63 +31,63 @@ namespace QuestFramework.Quests
         protected string? _translatedDescription;
         protected string? _translatedName;
 
-        [JsonProperty("Id")]
+        [JsonProperty("id")]
         public string Id
         {
             get => id.Value;
             set => id.Value = value;
         }
 
-        [JsonProperty("QuestKey")]
+        [JsonProperty("quest_key")]
         public string QuestKey 
         { 
             get => questKey.Value; 
             set => questKey.Value = value; 
         }
 
-        [JsonProperty("TypeDefinitionId")]
+        [JsonProperty("type_definition_id")]
         public string TypeDefinitionId 
         { 
             get => typeDefinitionId.Value;
             set => typeDefinitionId.Value = value;
         }
 
-        [JsonProperty("Name")]
+        [JsonProperty("name")]
         public string Name
         {
             get => name.Value;
             set => name.Value = value;
         }
 
-        [JsonProperty("Description")]
+        [JsonProperty("description")]
         public string Description
         {
             get => description.Value;
             set => description.Value = value;
         }
 
-        [JsonProperty("State")]
+        [JsonProperty("state")]
         public QuestState State
         {
             get => state.Value;
             set => state.Value = value;
         }
 
-        [JsonProperty("ShowNew")]
+        [JsonProperty("show_new")]
         public bool ShowNew
         {
             get => showNew.Value;
             set => showNew.Value = value;
         }
 
-        [JsonProperty("PreconditionsQuery")]
+        [JsonProperty("preconditions_query")]
         public string PreconditionsQueryString
         {
             get => preconditionsQueryString.Value;
             set => preconditionsQueryString.Value = value;
         }
 
-        [JsonProperty("PreconditionsDescription")]
+        [JsonProperty("preconditions_description")]
         public string PreconditionsDescription
         {
             get => preconditionsDescription.Value;
@@ -100,7 +100,7 @@ namespace QuestFramework.Quests
         [JsonIgnore]
         public NetFields NetFields { get; }
 
-        [JsonProperty("Objectives")]
+        [JsonProperty("objectives")]
         public IList<QuestObjective> Objectives
         {
             get => objectives;

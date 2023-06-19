@@ -17,7 +17,7 @@ namespace QuestFramework.Quests.Providers
             {
                 Description = "Test objective [Season]"
             };
-            co.modData["test"] = "testing";
+            co.ModData["test"] = "testing";
             quest.Objectives.Add(co);
             quest.ShowNew = true;
             return quest;

@@ -6,8 +6,10 @@ namespace QuestFramework.Framework.Model
 {
     internal class QuestManagerState
     {
-        [JsonProperty(ItemConverterType = typeof(QuestConverter<ICustomQuest>))]
+        [JsonProperty("quests", ItemConverterType = typeof(QuestConverter<ICustomQuest>))]
         public List<ICustomQuest> Quests { get; set; } = new();
+
+        [JsonProperty("applied_rules")]
         public List<string> Rules { get; set; } = new();
     }
 }

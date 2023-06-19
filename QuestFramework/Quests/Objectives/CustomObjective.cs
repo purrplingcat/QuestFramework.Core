@@ -1,16 +1,15 @@
 ﻿using Netcode;
 using Newtonsoft.Json;
 using QuestFramework.API;
+using QuestFramework.Extensions;
 using QuestFramework.Framework;
-using QuestFramework.Framework.Attributes;
-using QuestFramework.Framework.Converters;
 using StardewValley;
 using StardewValley.Internal;
 
 namespace QuestFramework.Quests.Objectives
 {
 
-    public class CustomObjective : QuestObjective, IHaveModData
+    public class CustomObjective : QuestObjective
     {
         public delegate void CustomObjectiveDelegate(IQuestObjective objective, IQuestMessage message, ModDataDictionary data, ICustomQuest quest);
 
@@ -18,23 +17,24 @@ namespace QuestFramework.Quests.Objectives
         private readonly NetBool showProgress = new();
 
         [JsonIgnore]
-        public ModDataDictionary modData { get; } = new ModDataDictionary();
+        public ModDataDictionary ModData { get; } = new ModDataDictionary();
 
-        [JsonProperty("ModData"), JsonConverter(typeof(ModDataConverter))]
-        public ModDataDictionary modDataForSerialization
+        [JsonProperty("mod_data")]
+        [Obsolete("For JSON serialization purposes only! Use ModData property instead.")]
+        public IDictionary<string, string> ModDataForSerialization
         { 
-            get => modData.GetForSerialization();
-            set => modData.SetFromSerialization(value);
+            get => ModData.ToDictionary();
+            set => ModData.SetFromDictionary(value);
         }
 
-        [JsonProperty("MethodName")]
+        [JsonProperty("method_name")]
         public string HandlerMethod
         {
             get => handlerMethod.Value; 
             set => handlerMethod.Value = value;
         }
 
-        [JsonProperty]
+        [JsonProperty("show_progress")]
         public bool ShowProgress
         {
             get => showProgress.Value;
@@ -47,7 +47,7 @@ namespace QuestFramework.Quests.Objectives
 
             NetFields
                 .AddField(handlerMethod, "handlerMethod")
-                .AddField(modData, "modData");
+                .AddField(ModData, "modData");
         }
 
         public override void Load(CustomQuest quest, Dictionary<string, string> data)
@@ -59,7 +59,7 @@ namespace QuestFramework.Quests.Objectives
 
             foreach (var item in data)
             {
-                modData[item.Key] = item.Value;
+                ModData[item.Key] = item.Value;
             }
         }
 
@@ -69,7 +69,7 @@ namespace QuestFramework.Quests.Objectives
 
             if (StaticDelegateBuilder.TryCreateDelegate<CustomObjectiveDelegate>(HandlerMethod, out var handler, out var error))
             {
-                handler(this, questMessage, modData, _quest);
+                handler(this, questMessage, ModData, _quest);
                 return;
             }
 

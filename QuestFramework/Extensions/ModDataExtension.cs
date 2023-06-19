@@ -21,13 +21,13 @@ namespace QuestFramework.Extensions
             return dict;
         }
 
-        public static void SetFromDictionary(this ModDataDictionary modData, IDictionary<string, string> dict)
+        public static void SetFromDictionary(this ModDataDictionary modData, IDictionary<string, string> source)
         {
             modData.Clear();
 
-            foreach (var key in dict.Keys )
+            foreach (var key in source.Keys )
             {
-                modData[key] = dict[key];
+                modData[key] = source[key];
             }
         }
     }

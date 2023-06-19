@@ -2,9 +2,7 @@
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.Locations;
 using static QuestFramework.Framework.Networking.QuestSyncMessage;
-using static StardewValley.Menus.CharacterCustomization;
 
 namespace QuestFramework.Framework.Networking
 {
@@ -59,26 +57,27 @@ namespace QuestFramework.Framework.Networking
             Farmer farmer = Game1.getFarmer(e.Peer.PlayerID);
             if (farmer == null) return;
 
-            var toMods = new string[] { _manifest.UniqueID };
-            var toPlayers = new long[] { e.Peer.PlayerID };
-
             if (!Peers.ContainsKey(e.Peer.PlayerID))
             {
                 Peers.Add(e.Peer.PlayerID, new QuestManager(farmer));
             }
 
+            SendAllPeers(e.Peer.PlayerID);
             Introduce(Peers.Roots[e.Peer.PlayerID], e.Peer.PlayerID);
+        }
 
+        private void SendAllPeers(long toPeerId)
+        {
             foreach (var peer in Peers.Roots)
             {
                 var msg = new QuestSyncMessage(
-                    Game1.Multiplayer.writeObjectFullBytes(peer.Value, e.Peer.PlayerID), 
-                    peer.Key, 
+                    Game1.Multiplayer.writeObjectFullBytes(peer.Value, toPeerId),
+                    peer.Key,
                     SyncType.FULL
                 );
 
-                _multiplayer.SendMessage(msg, MSG_TYPE, toMods, toPlayers);
-                Logger.Trace($"(SYNC) Sent Quest Manager full data of playerID {msg.PeerId} to {string.Join(" ,", toPlayers)}");
+                SendMessage(msg, toPeerId);
+                Logger.Trace($"(SYNC) Sent Quest Manager full data of playerID {msg.PeerId} to {toPeerId}");
             }
         }
 
@@ -86,7 +85,7 @@ namespace QuestFramework.Framework.Networking
         {
             var msg = new QuestSyncMessage(
                 Game1.Multiplayer.writeObjectFullBytes(peer, peerId), 
-                peer.Value.PlayerId, 
+                peer.Value.PlayerId,
                 SyncType.FULL
             );
 
@@ -221,11 +220,14 @@ namespace QuestFramework.Framework.Networking
             };
         }
 
-        protected void SendMessage(QuestSyncMessage message)
+        protected void SendMessage(QuestSyncMessage message, long toPeerId) 
+            => SendMessage(message, new[] { toPeerId });
+
+        protected virtual void SendMessage(QuestSyncMessage message, long[]? toPeerIds = null)
         {
             if (Context.IsMultiplayer)
             {
-                _multiplayer.SendMessage(message, MSG_TYPE, new string[] { _manifest.UniqueID });
+                _multiplayer.SendMessage(message, MSG_TYPE, new string[] { _manifest.UniqueID }, toPeerIds);
             }
         }
     }
