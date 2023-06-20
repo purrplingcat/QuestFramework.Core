@@ -9,8 +9,6 @@ namespace QuestFramework.API
 {
     public interface IQuestRenderer
     {
-        int Priority { get; }
-        bool ShouldRenderQuest(ICustomQuest quest);
         void Draw(SpriteBatch spriteBatch, ICustomQuest quest, IQuestMenu menu);
     }
 }

@@ -18,22 +18,13 @@ namespace QuestFramework.Game.Menus
         protected IList<IQuestObjective> _objectives = new List<IQuestObjective>();
 
         private static IReflectionHelper Reflection => QuestFrameworkMod.Reflection;
-        public static SortedSet<IQuestRenderer> Renderers { get; }
+        public static Dictionary<Type, IQuestRenderer> Renderers { get; } = new();
 
         private IQuestRenderer? _renderer;
 
         private string HoverText => Reflection
             .GetField<string>(this, "hoverText")
             .GetValue();
-
-        static CustomQuestLog()
-        {
-            Renderers = new SortedSet<IQuestRenderer>(
-                Comparer<IQuestRenderer>.Create(
-                    (a, b) => -1 * a.Priority.CompareTo(b.Priority)
-                )
-            );
-        }
 
         protected override IList<IQuest> GetAllQuests()
         {
@@ -75,18 +66,10 @@ namespace QuestFramework.Game.Menus
                     ? haveObjectives.GetObjectives() 
                     : new List<IQuestObjective>();
 
-                if (_shownQuest is not ICustomQuest quest)
-                    return;
-
-                foreach (var renderer in Renderers)
+                if (Renderers.TryGetValue(_shownQuest.GetType(), out var renderer))
                 {
-                    if (renderer.ShouldRenderQuest(quest))
-                    {
-                        _renderer = renderer;
-                        break;
-                    }
+                    _renderer = renderer;
                 }
-                
             }
         }
 
