@@ -7,7 +7,7 @@ namespace QuestFramework.Quests
     [JsonType("Standard")]
     public class StandardQuest : CustomQuest
     {
-        public StandardQuest() { }
+        public StandardQuest() : base() { }
 
         public StandardQuest(string questId, string questKey = "", string typeDefinitionId = "") : base(questId, questKey, typeDefinitionId)
         {

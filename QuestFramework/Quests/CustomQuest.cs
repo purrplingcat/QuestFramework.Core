@@ -25,8 +25,6 @@ namespace QuestFramework.Quests
         protected readonly NetEnum<QuestState> state = new(QuestState.InProgress);
         protected readonly NetObjectList<QuestObjective> objectives = new();
         protected readonly NetBool showNew = new();
-        protected readonly NetString preconditionsQueryString = new();
-        protected readonly NetString preconditionsDescription = new();
         protected bool _objectivesRegistrationDirty;
         protected string? _translatedDescription;
         protected string? _translatedName;
@@ -78,20 +76,6 @@ namespace QuestFramework.Quests
         {
             get => showNew.Value;
             set => showNew.Value = value;
-        }
-
-        [JsonProperty("preconditions_query")]
-        public string PreconditionsQueryString
-        {
-            get => preconditionsQueryString.Value;
-            set => preconditionsQueryString.Value = value;
-        }
-
-        [JsonProperty("preconditions_description")]
-        public string PreconditionsDescription
-        {
-            get => preconditionsDescription.Value;
-            set => preconditionsDescription.Value = value;
         }
 
         [JsonIgnore]

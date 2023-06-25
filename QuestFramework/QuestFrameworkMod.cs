@@ -11,6 +11,8 @@ using QuestFramework.Framework.Patching;
 using QuestFramework.Patches;
 using JsonKnownTypes;
 using QuestFramework.Game.Menus;
+using QuestFramework.Quests.Providers;
+using QuestFramework.Quests.Data;
 
 namespace QuestFramework
 {
@@ -29,6 +31,7 @@ namespace QuestFramework
         internal static IReflectionHelper Reflection { get; private set; }
 
         public static QuestFrameworkConfig Config { get; private set; } = new();
+        public static string ModId { get; private set; } = "";
 
         public override void Entry(IModHelper helper)
         {
@@ -37,6 +40,7 @@ namespace QuestFramework
             JsonTypesManager.RegisterTypesFromAssembly(GetType().Assembly);
             EventCommands.RegisterCommands(ModManifest.UniqueID);
 
+            ModId = ModManifest.UniqueID;
             Reflection = helper.Reflection;
             Config = helper.ReadConfig<QuestFrameworkConfig>();
             Synchronizer = new QuestSynchronizer(this, QuestManager.Managers);
@@ -46,6 +50,7 @@ namespace QuestFramework
                 new FarmerPatcher(),
             });
 
+            helper.Events.Content.AssetRequested += OnAssetRequested;
             helper.Events.GameLoop.DayStarted += OnDayStarted;
             helper.Events.GameLoop.DayEnding += OnDayEnding;
             helper.Events.GameLoop.UpdateTicking += OnGameUpdating;
@@ -54,6 +59,11 @@ namespace QuestFramework
             helper.Events.GameLoop.ReturnedToTitle += OnExitToTitle;
             helper.Events.Input.ButtonPressed += Input_ButtonPressed;
             CustomQuestLog.HookOnMenu(helper.Events.Display);
+        }
+
+        private void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
+        {
+            e.ProvideDataSet<CustomQuestData>(DefaultQuestProvider.AssetName);
         }
 
         [EventPriority(EventPriority.High)]
