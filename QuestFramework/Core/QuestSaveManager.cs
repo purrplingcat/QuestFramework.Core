@@ -1,10 +1,10 @@
 ﻿using HarmonyLib;
 using Newtonsoft.Json;
-using QuestFramework.Framework.Model;
+using QuestFramework.Core.Model;
 using StardewModdingAPI;
 using StardewValley;
 
-namespace QuestFramework.Framework
+namespace QuestFramework.Core
 {
     internal class QuestSaveManager
     {

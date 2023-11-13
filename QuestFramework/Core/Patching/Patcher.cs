@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 
-namespace QuestFramework.Framework.Patching
+namespace QuestFramework.Core.Patching
 {
     internal abstract class Patcher
     {

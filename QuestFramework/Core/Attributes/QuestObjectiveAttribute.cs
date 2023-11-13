@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuestFramework.Framework.Attributes
+namespace QuestFramework.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class QuestObjectiveAttribute : Attribute

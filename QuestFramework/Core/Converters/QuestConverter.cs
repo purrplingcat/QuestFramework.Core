@@ -2,7 +2,7 @@
 using JsonKnownTypes.Exceptions;
 using Newtonsoft.Json;
 
-namespace QuestFramework.Framework.Converters
+namespace QuestFramework.Core.Converters
 {
     internal class QuestConverter<T> : JsonTypeConverter<T>
     {

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using StardewModdingAPI;
 
-namespace QuestFramework.Framework.Model
+namespace QuestFramework.Core.Model
 {
     internal class QuestFrameworkState
     {

@@ -1,22 +1,22 @@
 ﻿using Newtonsoft.Json.Linq;
 using QuestFramework.API;
 
-namespace QuestFramework.Framework.Model
+namespace QuestFramework.Core.Model
 {
-    internal class QuestMessage<T> : IQuestMessage where T : class
+    internal class QuestEvent<T> : IQuestEvent where T : class
     {
         private readonly T? _message;
         public string Type { get; }
 
-        public QuestMessage(T? message, string name) 
+        public QuestEvent(T? message, string name) 
         {
             _message = message;
             Type = name;
         }
 
-        public object? Read() => _message;
+        public object? Message => _message;
 
-        public TMessage? ReadAs<TMessage>() where TMessage : class
+        public TMessage? Cast<TMessage>() where TMessage : class
         {
             if (_message == null)
             {

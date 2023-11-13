@@ -1,6 +1,6 @@
 ﻿using StardewModdingAPI;
 
-namespace QuestFramework.Framework
+namespace QuestFramework.Core
 {
     internal static class Logger
     {

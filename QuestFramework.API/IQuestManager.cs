@@ -13,7 +13,8 @@ namespace QuestFramework.API
         void AddQuest(ICustomQuest quest, bool ignoreDuplicities = false);
         bool HasQuest(string questId);
         void RemoveQuest(string questId);
-        void CheckQuests<T>(string type, T? payload = null) where T : class;
+        void RaiseEvent<T>(string type, T? payload) where T : class;
+        void RaiseEvent(string type);
         void Update();
     }
 }

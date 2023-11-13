@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using QuestFramework.Extensions;
-using QuestFramework.Framework;
-using QuestFramework.Framework.Patching;
+using QuestFramework.Core;
+using QuestFramework.Core.Patching;
 using StardewModdingAPI;
 using StardewValley;
 
@@ -31,9 +31,9 @@ namespace QuestFramework.Patches
 
         private static bool Before_addQuest(Farmer __instance, string questId)
         {
-            if (Utils.IsQfQuestId(questId, out string qfQuestId))
+            if (Utils.IsQfQuestId(questId))
             {
-                __instance.GetQuestManager()?.AddQuest(qfQuestId);
+                __instance.GetQuestManager()?.AddQuest(questId);
                 return false;
             }
 
@@ -42,9 +42,9 @@ namespace QuestFramework.Patches
 
         private static bool Before_removeQuest(Farmer __instance, string questID)
         {
-            if (Utils.IsQfQuestId(questID, out string qfQuestId))
+            if (Utils.IsQfQuestId(questID))
             {
-                __instance.GetQuestManager()?.RemoveQuest(qfQuestId);
+                __instance.GetQuestManager()?.RemoveQuest(questID);
                 return false;
             }
 

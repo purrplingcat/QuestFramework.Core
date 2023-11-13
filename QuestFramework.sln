@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuestFramework", "QuestFramework\QuestFramework.csproj", "{8AA09067-0EB6-499C-986A-E4942F89F094}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuestFramework.Core", "QuestFramework\QuestFramework.Core.csproj", "{8AA09067-0EB6-499C-986A-E4942F89F094}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuestFramework.API", "QuestFramework.API\QuestFramework.API.csproj", "{2C5E75AF-ED30-434E-813C-2E8ED9A93075}"
 EndProject

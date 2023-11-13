@@ -1,9 +1,9 @@
 ﻿{
-  "Name": "Quest Framework",
+  "Name": "Quest Framework Core",
   "Author": "PurrplingCat",
   "Version": "2.0.0",
   "Description": "Add, edit and manage your own quests and create new quest types.",
-  "UniqueID": "PurrplingCat.QuestFramework",
+  "UniqueID": "PurrplingCat.QuestFramework.Core",
   "EntryDll": "QuestFramework.dll",
   "MinimumApiVersion": "4.0.0-alpha",
   "UpdateKeys": [

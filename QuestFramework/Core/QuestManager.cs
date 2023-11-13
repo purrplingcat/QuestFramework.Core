@@ -1,12 +1,10 @@
 ﻿using Netcode;
 using StardewValley;
 using QuestFramework.API;
-using QuestFramework.Quests.Providers;
-using QuestFramework.Quests.Data;
-using QuestFramework.Framework.Model;
-using QuestFramework.Framework.Exceptions;
+using QuestFramework.Core.Model;
+using QuestFramework.Core.Exceptions;
 
-namespace QuestFramework.Framework
+namespace QuestFramework.Core
 {
     internal class QuestManager : IQuestManager, INetObject<NetFields>, IDisposable
     {
@@ -51,11 +49,6 @@ namespace QuestFramework.Framework
             _farmerID.Value = playerId;
         }
 
-        static QuestManager()
-        {
-            Providers.Add("Q", new DefaultQuestProvider());
-        }
-
         public QuestManager()
         {
             NetFields = new NetFields(NetFields.GetNameForInstance(this));
@@ -78,7 +71,7 @@ namespace QuestFramework.Framework
                 oldValue.OnRemove();
             }
 
-            HookOnQuest(newValue);
+            UpdateQuest(newValue);
         }
 
         private void OnQuestsReplaced(NetList<ICustomQuest, NetRef<ICustomQuest>> list, IList<ICustomQuest> before, IList<ICustomQuest> after)
@@ -96,12 +89,12 @@ namespace QuestFramework.Framework
             {
                 foreach (var quest in after)
                 {
-                    HookOnQuest(quest);
+                    UpdateQuest(quest);
                 }
             }
         }
 
-        private void HookOnQuest(ICustomQuest quest)
+        private void UpdateQuest(ICustomQuest quest)
         {
             if (quest == null) { return; }
 
@@ -121,13 +114,18 @@ namespace QuestFramework.Framework
             }
         }
 
-        public void CheckQuests<T>(string type, T? payload = null) where T : class
+        public void RaiseEvent(string type)
         {
-            IQuestMessage questMessage = new QuestMessage<T>(payload, type);
+            RaiseEvent<object>(type, null);
+        }
+
+        public void RaiseEvent<T>(string type, T? payload = null) where T : class
+        {
+            IQuestEvent questMessage = new QuestEvent<T>(payload, type);
 
             foreach (var quest in Quests)
             {
-                quest.HandleMessage(questMessage);
+                quest.HandleEvent(questMessage);
             }
         }
 
@@ -223,7 +221,7 @@ namespace QuestFramework.Framework
                 throw new QuestCreationException(questId, "ID prefix '#' is reserved for automatic generated quests.");
             }
 
-            if (questId[0] == '(' && questId.Contains(')'))
+            if (Utils.IsQfQuestId(questId))
             {
                 int splitIndex = questId.IndexOf(')');
                 string qualifier = questId[..(splitIndex + 1)];
@@ -238,7 +236,7 @@ namespace QuestFramework.Framework
                 return CreateQuest(questMetadata);
             }
 
-            return CreateQuest($"(Q){questId}");
+            throw new QuestCreationException($"Quest id '{questId}' is not full quialified");
         }
 
         public static ICustomQuest? CreateQuest(IQuestMetadata questMetadata)
@@ -257,7 +255,7 @@ namespace QuestFramework.Framework
 
             foreach (var quest in Quests)
             {
-                HookOnQuest(quest);
+                UpdateQuest(quest);
                 quest.Update();
             }
         }

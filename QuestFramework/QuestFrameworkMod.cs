@@ -3,16 +3,14 @@ using StardewValley;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using System.Diagnostics.CodeAnalysis;
-using QuestFramework.Framework;
-using QuestFramework.Framework.Networking;
+using QuestFramework.Core;
+using QuestFramework.Core.Networking;
 using QuestFramework.Extensions;
 using QuestFramework.Game;
-using QuestFramework.Framework.Patching;
+using QuestFramework.Core.Patching;
 using QuestFramework.Patches;
 using JsonKnownTypes;
 using QuestFramework.Game.Menus;
-using QuestFramework.Quests.Providers;
-using QuestFramework.Quests.Data;
 
 namespace QuestFramework
 {
@@ -50,7 +48,6 @@ namespace QuestFramework
                 new FarmerPatcher(),
             });
 
-            helper.Events.Content.AssetRequested += OnAssetRequested;
             helper.Events.GameLoop.DayStarted += OnDayStarted;
             helper.Events.GameLoop.DayEnding += OnDayEnding;
             helper.Events.GameLoop.UpdateTicking += OnGameUpdating;
@@ -58,12 +55,7 @@ namespace QuestFramework
             helper.Events.GameLoop.Saving += OnSaving;
             helper.Events.GameLoop.ReturnedToTitle += OnExitToTitle;
             helper.Events.Input.ButtonPressed += Input_ButtonPressed;
-            CustomQuestLog.HookOnMenu(helper.Events.Display);
-        }
-
-        private void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
-        {
-            e.ProvideDataSet<CustomQuestData>(DefaultQuestProvider.AssetName);
+            CustomQuestLog.HookOnQuestLog(helper.Events.Display);
         }
 
         [EventPriority(EventPriority.High)]
@@ -72,6 +64,7 @@ namespace QuestFramework
             _hold = true;
             QuestManager.Current?.Update();
             FakeOrder.Uninstall();
+            QuestManager.Current?.RaiseEvent("DayEnding");
         }
 
         [EventPriority(EventPriority.High)]
@@ -80,6 +73,7 @@ namespace QuestFramework
             _hold = false;
             QuestManager.Current?.Update();
             FakeOrder.Install();
+            QuestManager.Current?.RaiseEvent("DayStarted");
         }
 
         // TODO: Only for test purposes. Remove it when it's not needed anymore

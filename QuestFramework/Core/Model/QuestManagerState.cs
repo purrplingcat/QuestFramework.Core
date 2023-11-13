@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 using QuestFramework.API;
-using QuestFramework.Framework.Converters;
+using QuestFramework.Core.Converters;
 
-namespace QuestFramework.Framework.Model
+namespace QuestFramework.Core.Model
 {
     internal class QuestManagerState
     {

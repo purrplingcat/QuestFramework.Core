@@ -1,5 +1,5 @@
 ﻿using QuestFramework.API;
-using QuestFramework.Framework;
+using QuestFramework.Core;
 using StardewValley;
 
 namespace QuestFramework.Extensions

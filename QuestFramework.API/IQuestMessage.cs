@@ -1,9 +1,9 @@
 ﻿namespace QuestFramework.API
 {
-    public interface IQuestMessage
+    public interface IQuestEvent
     {
         string Type { get; }
-        object? Read();
-        TMessage? ReadAs<TMessage>() where TMessage : class;
+        object? Message { get; }
+        TMessage? Cast<TMessage>() where TMessage : class;
     }
 }

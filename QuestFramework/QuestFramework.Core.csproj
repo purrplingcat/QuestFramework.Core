@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>QuestFramework</AssemblyName>
+    <AssemblyName>QuestFramework.Core</AssemblyName>
     <RootNamespace>QuestFramework</RootNamespace>
     <Version>2.0.0</Version>
     <TargetFramework>net6.0</TargetFramework>

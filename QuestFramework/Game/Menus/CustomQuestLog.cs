@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using QuestFramework.API;
 using QuestFramework.Extensions;
-using QuestFramework.Framework;
+using QuestFramework.Core;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -127,7 +127,7 @@ namespace QuestFramework.Game.Menus
             IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), xPositionOnScreen, yPositionOnScreen, width, height, Color.White, 4f);
         }
 
-        public static void HookOnMenu(IDisplayEvents events)
+        public static void HookOnQuestLog(IDisplayEvents events)
         {
             events.MenuChanged += (_, e) =>
             {

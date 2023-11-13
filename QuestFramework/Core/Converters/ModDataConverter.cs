@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
-using StardewValley;
+using StardewValley.Mods;
 
-namespace QuestFramework.Framework.Converters
+namespace QuestFramework.Core.Converters
 {
     internal class ModDataConverter : JsonConverter<ModDataDictionary>
     {

@@ -2,9 +2,9 @@
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using static QuestFramework.Framework.Networking.QuestSyncMessage;
+using static QuestFramework.Core.Networking.QuestSyncMessage;
 
-namespace QuestFramework.Framework.Networking
+namespace QuestFramework.Core.Networking
 {
     internal class QuestSynchronizer
     {

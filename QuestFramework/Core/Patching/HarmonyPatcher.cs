@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using StardewModdingAPI;
 
-namespace QuestFramework.Framework.Patching
+namespace QuestFramework.Core.Patching
 {
     internal static class HarmonyPatcher
     {
