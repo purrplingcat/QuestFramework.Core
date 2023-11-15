@@ -14,7 +14,7 @@ using QuestFramework.Game.Menus;
 
 namespace QuestFramework
 {
-    public class QuestFrameworkMod : Mod
+    public class QuestCoreMod : Mod
     {
         private readonly JsonSerializerSettings _jsonSerializerSettings = new();
         private bool _hold = true;
@@ -24,6 +24,9 @@ namespace QuestFramework
 
         [AllowNull]
         internal static QuestSaveManager SaveManager { get; private set; }
+
+        [AllowNull]
+        internal static QuestEvents Events { get; private set; }
         
         [AllowNull]
         internal static IReflectionHelper Reflection { get; private set; }
@@ -43,6 +46,7 @@ namespace QuestFramework
             Config = helper.ReadConfig<QuestFrameworkConfig>();
             Synchronizer = new QuestSynchronizer(this, QuestManager.Managers);
             SaveManager = new QuestSaveManager(_jsonSerializerSettings, helper.Data, ModManifest);
+            Events = new QuestEvents();
 
             HarmonyPatcher.Apply(this, new Patcher[] {
                 new FarmerPatcher(),
@@ -64,7 +68,6 @@ namespace QuestFramework
             _hold = true;
             QuestManager.Current?.Update();
             FakeOrder.Uninstall();
-            QuestManager.Current?.RaiseEvent("DayEnding");
         }
 
         [EventPriority(EventPriority.High)]
@@ -73,7 +76,6 @@ namespace QuestFramework
             _hold = false;
             QuestManager.Current?.Update();
             FakeOrder.Install();
-            QuestManager.Current?.RaiseEvent("DayStarted");
         }
 
         // TODO: Only for test purposes. Remove it when it's not needed anymore

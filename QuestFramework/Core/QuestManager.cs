@@ -114,21 +114,6 @@ namespace QuestFramework.Core
             }
         }
 
-        public void RaiseEvent(string type)
-        {
-            RaiseEvent<object>(type, null);
-        }
-
-        public void RaiseEvent<T>(string type, T? payload = null) where T : class
-        {
-            IQuestEvent questMessage = new QuestEvent<T>(payload, type);
-
-            foreach (var quest in Quests)
-            {
-                quest.HandleEvent(questMessage);
-            }
-        }
-
         public void AddQuest(string questId, int? seed = null, bool ignoreDuplicities = false)
         {
             if (string.IsNullOrWhiteSpace(questId))

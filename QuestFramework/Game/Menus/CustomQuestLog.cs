@@ -17,7 +17,7 @@ namespace QuestFramework.Game.Menus
         private IQuest? _previousQuest;
         protected IList<IQuestObjective> _objectives = new List<IQuestObjective>();
 
-        private static IReflectionHelper Reflection => QuestFrameworkMod.Reflection;
+        private static IReflectionHelper Reflection => QuestCoreMod.Reflection;
         public static Dictionary<Type, IQuestRenderer> Renderers { get; } = new();
 
         private IQuestRenderer? _renderer;

@@ -13,7 +13,6 @@ namespace QuestFramework.API
         void OnAdd(IQuestManager manager);
         void OnRemove();
         void OnCancel();
-        void HandleEvent(IQuestEvent questMessage);
         bool Reload();
         void Update();
         void CheckCompletion();

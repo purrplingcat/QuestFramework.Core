@@ -1,9 +1,7 @@
-﻿using QuestFramework.Extensions;
-using QuestFramework.Messages;
-using StardewModdingAPI;
-using StardewValley;
-using StardewValley.Monsters;
+﻿using StardewValley;
 using StardewValley.SpecialOrders;
+using StardewModdingAPI;
+using static QuestFramework.QuestCoreMod;
 
 namespace QuestFramework.Game
 {
@@ -64,49 +62,14 @@ namespace QuestFramework.Game
             if (_subscribed) { return; }
 
             _subscribed = true;
-            onFishCaught += OnFishCaught;
-            onGiftGiven += OnGiftGiven;
-            onItemCollected += OnItemCollected;
-            onItemDelivered += OnItemDelivered;
-            onItemShipped += OnItemShipped;
-            onJKScoreAchieved += OnJKScoreAchieved;
-            onMineFloorReached += OnMineFloorReached;
-            onMonsterSlain += OnMonsterSlain;
-        }
-
-        private int OnItemDelivered(Farmer farmer, NPC npc, Item item, bool arg4)
-        {
-            int originalAmount = item.Stack;
-
-            SendMessage("ItemDelivered", new GiveMessage(farmer, npc, item));
-
-            return originalAmount - item.Stack;
-        }
-
-        private void OnMonsterSlain(Farmer farmer, Monster monster) 
-            => SendMessage("MonsterSlain", new MonsterMessage(farmer, monster));
-
-        private void OnMineFloorReached(Farmer farmer, int floor) 
-            => SendMessage("MineFloorReached", new MineFloorMessage(farmer, floor));
-
-        private void OnJKScoreAchieved(Farmer farmer, int score) 
-            => SendMessage("JKScoreAchieved", new ScoreMessage(farmer, score));
-
-        private void OnItemShipped(Farmer farmer, Item item, int price) 
-            => SendMessage("ItemShipped", new ItemMessage(farmer, item, price));
-
-        private void OnItemCollected(Farmer farmer, Item item) 
-            => SendMessage("ItemCollected", new ItemMessage(farmer, item));
-
-        private void OnGiftGiven(Farmer farmer, NPC npc, Item item) 
-            => SendMessage("GiftGiven", new GiveMessage(farmer, npc, item));
-
-        private void OnFishCaught(Farmer farmer, Item item) 
-            => SendMessage("FishCaught", new ItemMessage(farmer, item));
-
-        private static void SendMessage<T>(string type, T message) where T : class
-        {
-            Game1.player.GetQuestManager()?.RaiseEvent(type, message);
+            onFishCaught += Events.OnFishCaught;
+            onGiftGiven += Events.OnGiftGiven;
+            onItemCollected += Events.OnItemCollected;
+            onItemDelivered += Events.OnItemDelivered;
+            onItemShipped += Events.OnItemShipped;
+            onJKScoreAchieved += Events.OnJKScoreAchieved;
+            onMineFloorReached += Events.OnMineFloorReached;
+            onMonsterSlain += Events.OnMonsterSlain;
         }
     }
 }
