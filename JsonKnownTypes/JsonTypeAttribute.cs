@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JsonKnownTypes
+namespace QuestFramework.Json
 {
     /// <summary>
     /// Add discriminator to type which is used with

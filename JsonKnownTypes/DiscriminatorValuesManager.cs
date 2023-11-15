@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JsonKnownTypes
+namespace QuestFramework.Json
 {
     internal static class DiscriminatorValuesManager
     {
@@ -11,7 +11,7 @@ namespace JsonKnownTypes
             {
                 var discriminator = attr.Discriminator ?? attr.Type.Name;
                 var typeAttr = AttributesManager.GetJsonTypeAttribute(attr.Type);
-                
+
                 if (typeAttr != null && typeAttr.Discriminator != null)
                 {
                     discriminator = typeAttr.Discriminator;

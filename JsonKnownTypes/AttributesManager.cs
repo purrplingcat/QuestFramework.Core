@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JsonKnownTypes
+namespace QuestFramework.Json
 {
     internal static class AttributesManager
     {

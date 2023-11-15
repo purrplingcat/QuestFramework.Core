@@ -1,4 +1,4 @@
-﻿using QuestFramework.API.Events;
+﻿using QuestFramework.Core.Events;
 
 namespace QuestFramework.API
 {

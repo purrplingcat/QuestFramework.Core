@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
-using JsonKnownTypes.Exceptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using QuestFramework.Json.Exceptions;
 
-namespace JsonKnownTypes
+namespace QuestFramework.Json
 {
     /// <summary>
     /// Convert an object with discriminator to and from JSON
@@ -17,7 +17,7 @@ namespace JsonKnownTypes
         {
             _typesDiscriminatorValues = JsonTypesManager.GetDiscriminatorValues<T>();
         }
-        
+
         public override bool CanConvert(Type objectType)
             => _typesDiscriminatorValues.Contains(objectType);
 
@@ -113,7 +113,7 @@ namespace JsonKnownTypes
                 _isInWrite.Value = true;
 
                 var writerProxy = new JsonKnownProxyWriter(_typesDiscriminatorValues.FieldName, discriminator, writer);
-                
+
                 try
                 {
                     serializer.Serialize(writerProxy, value);

@@ -16,8 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JsonKnownTypes\JsonKnownTypes.csproj" />
-    <ProjectReference Include="..\QuestFramework.API\QuestFramework.API.csproj" />
+    <ProjectReference Include="..\JsonKnownTypes\QuestFramework.Json.csproj" />
   </ItemGroup>
 
 </Project>

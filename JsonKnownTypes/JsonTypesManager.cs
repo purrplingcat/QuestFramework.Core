@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using JsonKnownTypes.Utils;
+using QuestFramework.Json.Utils;
 
-namespace JsonKnownTypes
+namespace QuestFramework.Json
 {
     public static class JsonTypesManager
     {
@@ -22,8 +22,8 @@ namespace JsonKnownTypes
         {
             var discriminatorAttribute = AttributesManager.GetJsonDiscriminatorAttribute(typeof(T));
 
-            var discriminatorSettings = discriminatorAttribute == null 
-                ? DefaultDiscriminatorSettings 
+            var discriminatorSettings = discriminatorAttribute == null
+                ? DefaultDiscriminatorSettings
                 : Mapper.Map(discriminatorAttribute);
 
             var typeSettings = new DiscriminatorValues(typeof(T), discriminatorSettings.DiscriminatorFieldName);

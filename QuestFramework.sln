@@ -5,14 +5,12 @@ VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuestFramework.Core", "QuestFramework\QuestFramework.Core.csproj", "{8AA09067-0EB6-499C-986A-E4942F89F094}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuestFramework.API", "QuestFramework.API\QuestFramework.API.csproj", "{2C5E75AF-ED30-434E-813C-2E8ED9A93075}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F3721EDF-5620-4235-9AAA-6016CDC050FB}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonKnownTypes", "JsonKnownTypes\JsonKnownTypes.csproj", "{8CDF6CDC-7F5E-439C-ADEF-72CE3FF90764}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuestFramework.Json", "JsonKnownTypes\QuestFramework.Json.csproj", "{8CDF6CDC-7F5E-439C-ADEF-72CE3FF90764}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,10 +22,6 @@ Global
 		{8AA09067-0EB6-499C-986A-E4942F89F094}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AA09067-0EB6-499C-986A-E4942F89F094}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8AA09067-0EB6-499C-986A-E4942F89F094}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2C5E75AF-ED30-434E-813C-2E8ED9A93075}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2C5E75AF-ED30-434E-813C-2E8ED9A93075}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2C5E75AF-ED30-434E-813C-2E8ED9A93075}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2C5E75AF-ED30-434E-813C-2E8ED9A93075}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8CDF6CDC-7F5E-439C-ADEF-72CE3FF90764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8CDF6CDC-7F5E-439C-ADEF-72CE3FF90764}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CDF6CDC-7F5E-439C-ADEF-72CE3FF90764}.Release|Any CPU.ActiveCfg = Release|Any CPU

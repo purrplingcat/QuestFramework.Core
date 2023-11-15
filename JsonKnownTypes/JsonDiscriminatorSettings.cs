@@ -1,4 +1,4 @@
-﻿namespace JsonKnownTypes
+﻿namespace QuestFramework.Json
 {
     public class JsonDiscriminatorSettings
     {

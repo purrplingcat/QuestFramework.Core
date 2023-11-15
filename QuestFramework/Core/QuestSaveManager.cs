@@ -1,5 +1,4 @@
-﻿using HarmonyLib;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using QuestFramework.Core.Model;
 using StardewModdingAPI;
 using StardewValley;

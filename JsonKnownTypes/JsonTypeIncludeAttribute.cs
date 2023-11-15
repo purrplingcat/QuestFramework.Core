@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JsonKnownTypes
+namespace QuestFramework.Json
 {
     /// <summary>
     /// Add discriminator to specified type
@@ -9,7 +9,7 @@ namespace JsonKnownTypes
     public class JsonTypeIncludeAttribute : Attribute
     {
         public Type Type { get; }
-        
+
         public string Discriminator { get; }
 
         public JsonTypeIncludeAttribute(Type type)

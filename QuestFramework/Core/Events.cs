@@ -1,7 +1,7 @@
 ﻿using StardewValley;
 using StardewValley.Monsters;
 
-namespace QuestFramework.API.Events
+namespace QuestFramework.Core.Events
 {
     /// <summary>
     /// 

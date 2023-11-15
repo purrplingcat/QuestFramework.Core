@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuestFramework.Core.Exceptions
+namespace QuestFramework.Core
 {
     public class QuestException : Exception
     {
@@ -13,7 +13,7 @@ namespace QuestFramework.Core.Exceptions
         }
     }
 
-    public class QuestCreationException : QuestException 
+    public class QuestCreationException : QuestException
     {
         public QuestCreationException(string questId) : base($"Unable to create quest with ID '´{questId}'")
         {

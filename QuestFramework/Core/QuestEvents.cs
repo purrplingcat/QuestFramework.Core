@@ -1,7 +1,8 @@
-﻿using QuestFramework.API;
-using QuestFramework.API.Events;
-using StardewValley;
+﻿using StardewValley;
 using StardewValley.Monsters;
+
+using QuestFramework.API;
+using QuestFramework.Core.Events;
 
 namespace QuestFramework.Core
 {

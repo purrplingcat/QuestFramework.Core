@@ -1,16 +1,19 @@
-﻿using Newtonsoft.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
+
 using StardewValley;
+
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using System.Diagnostics.CodeAnalysis;
+
 using QuestFramework.Core;
 using QuestFramework.Core.Networking;
+using QuestFramework.Core.Patching;
 using QuestFramework.Extensions;
 using QuestFramework.Game;
-using QuestFramework.Core.Patching;
-using QuestFramework.Patches;
-using JsonKnownTypes;
 using QuestFramework.Game.Menus;
+using QuestFramework.Json;
+using QuestFramework.Patches;
 
 namespace QuestFramework
 {
@@ -31,7 +34,7 @@ namespace QuestFramework
         [AllowNull]
         internal static IReflectionHelper Reflection { get; private set; }
 
-        public static QuestFrameworkConfig Config { get; private set; } = new();
+        public static QuestCoreConfig Config { get; private set; } = new();
         public static string ModId { get; private set; } = "";
 
         public override void Entry(IModHelper helper)
@@ -43,7 +46,7 @@ namespace QuestFramework
 
             ModId = ModManifest.UniqueID;
             Reflection = helper.Reflection;
-            Config = helper.ReadConfig<QuestFrameworkConfig>();
+            Config = helper.ReadConfig<QuestCoreConfig>();
             Synchronizer = new QuestSynchronizer(this, QuestManager.Managers);
             SaveManager = new QuestSaveManager(_jsonSerializerSettings, helper.Data, ModManifest);
             Events = new QuestEvents();
@@ -60,6 +63,11 @@ namespace QuestFramework
             helper.Events.GameLoop.ReturnedToTitle += OnExitToTitle;
             helper.Events.Input.ButtonPressed += Input_ButtonPressed;
             CustomQuestLog.HookOnQuestLog(helper.Events.Display);
+        }
+
+        public override object? GetApi(IModInfo mod)
+        {
+            return QuestCoreApi.RequestApi(mod.Manifest);
         }
 
         [EventPriority(EventPriority.High)]

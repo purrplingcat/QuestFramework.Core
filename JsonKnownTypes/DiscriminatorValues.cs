@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using JsonKnownTypes.Exceptions;
+using QuestFramework.Json.Exceptions;
 
-namespace JsonKnownTypes
+namespace QuestFramework.Json
 {
     public class DiscriminatorValues
     {

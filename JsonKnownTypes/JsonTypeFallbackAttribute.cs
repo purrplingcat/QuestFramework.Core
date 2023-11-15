@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JsonKnownTypes
+namespace QuestFramework.Json
 {
     /// <summary>
     /// Adds fallback type when type lookup fails.

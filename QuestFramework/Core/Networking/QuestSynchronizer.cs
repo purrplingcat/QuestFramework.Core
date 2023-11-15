@@ -16,7 +16,7 @@ namespace QuestFramework.Core.Networking
         public NetRootDictionary<long, QuestManager> Peers { get; set; }
         public static long PlayerId => Game1.player?.UniqueMultiplayerID ?? 0L;
 
-        private static QuestFrameworkConfig Config => QuestCoreMod.Config;
+        private static QuestCoreConfig Config => QuestCoreMod.Config;
 
         public QuestSynchronizer(Mod mod, NetRootDictionary<long, QuestManager> peers)
         {

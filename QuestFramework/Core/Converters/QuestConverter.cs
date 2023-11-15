@@ -1,6 +1,6 @@
-﻿using JsonKnownTypes;
-using JsonKnownTypes.Exceptions;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using QuestFramework.Json;
+using QuestFramework.Json.Exceptions;
 
 namespace QuestFramework.Core.Converters
 {

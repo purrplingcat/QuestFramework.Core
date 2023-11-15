@@ -1,3 +1,3 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("JsonKnownTypes.UnitTests")]
+[assembly: InternalsVisibleTo("QuestFramework.UnitTests")]

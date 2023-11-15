@@ -1,4 +1,4 @@
-﻿namespace JsonKnownTypes.Utils
+﻿namespace QuestFramework.Json.Utils
 {
     internal static class Mapper
     {
@@ -7,7 +7,7 @@
             var settings = new JsonDiscriminatorSettings();
 
             settings.DiscriminatorFieldName = entity.Name ?? settings.DiscriminatorFieldName;
-            
+
             return settings;
         }
     }
