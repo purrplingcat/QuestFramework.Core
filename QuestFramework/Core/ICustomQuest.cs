@@ -1,7 +1,7 @@
 ﻿using Netcode;
 using StardewValley.Quests;
 
-namespace QuestFramework.API
+namespace QuestFramework.Core
 {
     public interface ICustomQuest : IQuest, INetObject<NetFields>
     {

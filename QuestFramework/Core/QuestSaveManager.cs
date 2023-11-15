@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using QuestFramework.Core.Model;
+using QuestFramework.Internal;
 using StardewModdingAPI;
 using StardewValley;
 

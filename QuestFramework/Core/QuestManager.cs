@@ -2,6 +2,7 @@
 using StardewValley;
 using QuestFramework.API;
 using QuestFramework.Core.Model;
+using QuestFramework.Internal;
 
 namespace QuestFramework.Core
 {
@@ -223,7 +224,7 @@ namespace QuestFramework.Core
             throw new QuestCreationException($"Quest id '{questId}' is not full quialified");
         }
 
-        public static ICustomQuest? CreateQuest(IQuestMetadata questMetadata)
+        public static ICustomQuest? CreateQuest(QuestMetadata questMetadata)
         {
             if (!Providers.TryGetValue(questMetadata.TypeIdentifier, out var provider))
             {

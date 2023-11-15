@@ -1,5 +1,4 @@
-﻿using QuestFramework.API;
-using QuestFramework.Core;
+﻿using QuestFramework.Core;
 using StardewValley;
 
 namespace QuestFramework.Extensions
@@ -14,6 +13,11 @@ namespace QuestFramework.Extensions
             }
 
             return null;
+        }
+
+        public static void AddQuest(this Farmer farmer, ICustomQuest quest)
+        {
+            farmer.GetQuestManager()?.AddQuest(quest);
         }
     }
 }

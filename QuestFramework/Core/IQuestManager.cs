@@ -1,6 +1,6 @@
 ﻿using StardewValley;
 
-namespace QuestFramework.API
+namespace QuestFramework.Core
 {
     public interface IQuestManager
     {

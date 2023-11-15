@@ -10,16 +10,18 @@ using QuestFramework.Core;
 using QuestFramework.Core.Networking;
 using QuestFramework.Core.Patching;
 using QuestFramework.Extensions;
-using QuestFramework.Game;
-using QuestFramework.Game.Menus;
+using QuestFramework.Internal;
 using QuestFramework.Json;
 using QuestFramework.Patches;
+using QuestFramework.API;
+using StardewModdingAPI.Utilities;
+using QuestFramework.Menus;
 
 namespace QuestFramework
 {
     public class QuestCoreMod : Mod
     {
-        private readonly JsonSerializerSettings _jsonSerializerSettings = new();
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new();        
         private bool _hold = true;
 
         [AllowNull]

@@ -1,9 +1,9 @@
 ﻿using QuestFramework.Extensions;
 using StardewValley;
 
-namespace QuestFramework.Game
+namespace QuestFramework.Internal
 {
-    public static class EventCommands
+    internal static class EventCommands
     {
         public static void AddQuest(Event @event, string[] args, EventContext context)
         {

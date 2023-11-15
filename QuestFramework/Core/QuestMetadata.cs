@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace QuestFramework.Core
 {
-    internal record QuestMetadata : IQuestMetadata
+    public record QuestMetadata
     {
         public string QualifiedId { get; init; } = "";
 

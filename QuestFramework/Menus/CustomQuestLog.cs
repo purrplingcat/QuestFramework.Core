@@ -9,8 +9,9 @@ using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Menus;
 using StardewValley.Quests;
+using QuestFramework.Internal;
 
-namespace QuestFramework.Game.Menus
+namespace QuestFramework.Menus
 {
     internal class CustomQuestLog : QuestLog, IQuestMenu
     {
@@ -62,8 +63,8 @@ namespace QuestFramework.Game.Menus
             {
                 _previousQuest = _shownQuest;
                 _renderer = null;
-                _objectives = _shownQuest is IHaveObjectives haveObjectives 
-                    ? haveObjectives.GetObjectives() 
+                _objectives = _shownQuest is IHaveObjectives haveObjectives
+                    ? haveObjectives.GetObjectives()
                     : new List<IQuestObjective>();
 
                 if (Renderers.TryGetValue(_shownQuest.GetType(), out var renderer))
@@ -116,7 +117,7 @@ namespace QuestFramework.Game.Menus
             drawMouse(b);
             if (HoverText.Length > 0)
             {
-                IClickableMenu.drawHoverText(b, HoverText, Game1.dialogueFont);
+                drawHoverText(b, HoverText, Game1.dialogueFont);
             }
         }
 
@@ -124,7 +125,7 @@ namespace QuestFramework.Game.Menus
         {
             b.Draw(Game1.fadeToBlackRect, Game1.graphics.GraphicsDevice.Viewport.Bounds, Color.Black * 0.75f);
             SpriteText.drawStringWithScrollCenteredAt(b, Game1.content.LoadString("Strings\\StringsFromCSFiles:QuestLog.cs.11373"), xPositionOnScreen + width / 2, yPositionOnScreen - 64);
-            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), xPositionOnScreen, yPositionOnScreen, width, height, Color.White, 4f);
+            drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), xPositionOnScreen, yPositionOnScreen, width, height, Color.White, 4f);
         }
 
         public static void HookOnQuestLog(IDisplayEvents events)

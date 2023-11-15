@@ -1,4 +1,5 @@
-﻿using StardewValley;
+﻿using QuestFramework.Core;
+using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;

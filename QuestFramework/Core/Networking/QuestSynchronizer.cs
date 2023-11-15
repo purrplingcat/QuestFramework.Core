@@ -1,4 +1,5 @@
 ﻿using Netcode;
+using QuestFramework.Internal;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;

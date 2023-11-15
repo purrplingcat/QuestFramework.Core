@@ -3,7 +3,7 @@ using StardewValley.SpecialOrders;
 using StardewModdingAPI;
 using static QuestFramework.QuestCoreMod;
 
-namespace QuestFramework.Game
+namespace QuestFramework.Internal
 {
     internal class FakeOrder : SpecialOrder
     {

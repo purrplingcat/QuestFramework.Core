@@ -12,6 +12,10 @@ namespace QuestFramework.Patches
         public override void Apply(Harmony harmony, IMonitor monitor)
         {
             harmony.Patch(
+                original: RequireMethod<Farmer>(nameof(Farmer.hasQuest)),
+                prefix: GetHarmonyMethod(nameof(Before_hasQuest))
+            );
+            harmony.Patch(
                 original: RequireMethod<Farmer>(nameof(Farmer.addQuest)),
                 prefix: GetHarmonyMethod(nameof(Before_addQuest))
             );
@@ -27,6 +31,17 @@ namespace QuestFramework.Patches
                 original: RequirePropertyGetter<Farmer>(nameof(Farmer.hasVisibleQuests)),
                 postfix: GetHarmonyMethod(nameof(After_get_hasVisibleQuests))
             );
+        }
+
+        private static bool Before_hasQuest(Farmer __instance, string questId)
+        {
+            if (Utils.IsQfQuestId(questId))
+            {
+                __instance.GetQuestManager()?.HasQuest(questId);
+                return false;
+            }
+
+            return true;
         }
 
         private static bool Before_addQuest(Farmer __instance, string questId)

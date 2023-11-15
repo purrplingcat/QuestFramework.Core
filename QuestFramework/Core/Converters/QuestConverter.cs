@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using QuestFramework.Internal;
 using QuestFramework.Json;
 using QuestFramework.Json.Exceptions;
 
