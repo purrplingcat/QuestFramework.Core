@@ -33,11 +33,11 @@ namespace QuestFramework.Patches
             );
         }
 
-        private static bool Before_hasQuest(Farmer __instance, string questId)
+        private static bool Before_hasQuest(Farmer __instance, string id)
         {
-            if (Utils.IsQfQuestId(questId))
+            if (Utils.IsQfQuestId(id))
             {
-                __instance.GetQuestManager()?.HasQuest(questId);
+                __instance.GetQuestManager()?.HasQuest(id);
                 return false;
             }
 

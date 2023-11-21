@@ -13,13 +13,11 @@ using QuestFramework.Extensions;
 using QuestFramework.Internal;
 using QuestFramework.Json;
 using QuestFramework.Patches;
-using QuestFramework.API;
-using StardewModdingAPI.Utilities;
 using QuestFramework.Menus;
 
 namespace QuestFramework
 {
-    public class QuestCoreMod : Mod
+    internal class QuestCoreMod : Mod
     {
         private readonly JsonSerializerSettings _jsonSerializerSettings = new();        
         private bool _hold = true;
@@ -40,7 +38,6 @@ namespace QuestFramework
         internal static QuestIndicatorManager IndicatorManager { get; private set; }
 
         public static QuestCoreConfig Config { get; private set; } = new();
-        public static string ModId { get; private set; } = "";
 
         public override void Entry(IModHelper helper)
         {
@@ -49,7 +46,6 @@ namespace QuestFramework
             JsonTypesManager.RegisterTypesFromAssembly(GetType().Assembly);
             EventCommands.RegisterCommands(ModManifest.UniqueID);
 
-            ModId = ModManifest.UniqueID;
             Reflection = helper.Reflection;
             Config = helper.ReadConfig<QuestCoreConfig>();
             Synchronizer = new QuestSynchronizer(this, QuestManager.Managers);
@@ -97,19 +93,22 @@ namespace QuestFramework
         {
             if (!Context.IsWorldReady) { return; }
             
-            if (e.Button == SButton.F5)
+            if (e.Button == SButton.F5 && Game1.currentLocation != null)
             {
-                Game1.player.GetQuestManager()?.AddQuest("test");
+                foreach (var npc in Game1.currentLocation.characters)
+                {
+                    if (npc == null || !npc.isVillager()) continue;
+
+                    npc.SetMark("test", (QuestMark)Game1.random.Next(1, Enum.GetValues(typeof(QuestMark)).Length));
+                }
             }
 
             if (e.Button == SButton.F6)
             {
-                SaveManager.SaveState();
-            }
-
-            if (e.Button == SButton.F8)
-            {
-                SaveManager.LoadState();
+                foreach (var indicator in IndicatorManager.Indicators.Values)
+                {
+                    indicator.Clear();
+                }
             }
         }
 

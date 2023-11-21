@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+	<ProductName>QuestFramework</ProductName>
     <AssemblyName>QuestFramework.Core</AssemblyName>
     <RootNamespace>QuestFramework</RootNamespace>
     <Version>2.0.0</Version>

@@ -8,8 +8,10 @@ namespace QuestFramework.Core
         Default,
         Exclamation,
         ExclamationBlue,
+        ExclamationGreen,
         ExclamationBig,
-        Question
+        Question,
+        Arrow
     }
 
     public class QuestIndicator
