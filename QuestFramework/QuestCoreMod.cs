@@ -36,6 +36,9 @@ namespace QuestFramework
         [AllowNull]
         internal static IReflectionHelper Reflection { get; private set; }
 
+        [AllowNull]
+        internal static QuestIndicatorManager IndicatorManager { get; private set; }
+
         public static QuestCoreConfig Config { get; private set; } = new();
         public static string ModId { get; private set; } = "";
 
@@ -51,6 +54,7 @@ namespace QuestFramework
             Config = helper.ReadConfig<QuestCoreConfig>();
             Synchronizer = new QuestSynchronizer(this, QuestManager.Managers);
             SaveManager = new QuestSaveManager(_jsonSerializerSettings, helper.Data, ModManifest);
+            IndicatorManager = new QuestIndicatorManager(helper.Events.Display);
             Events = new QuestEvents();
 
             HarmonyPatcher.Apply(this, new Patcher[] {
