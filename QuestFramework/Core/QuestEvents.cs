@@ -16,6 +16,7 @@ namespace QuestFramework.Core
         public event EventHandler<JKScoreAchievedEventArgs>? JKScoreAchieved;
         public event EventHandler<MineFloorReachedEventArgs>? MineFloorReached;
         public event EventHandler<MonsterSlainEventArgs>? MonsterSlain;
+        public event EventHandler<InteractEventArgs>? Interact;
 
         public void OnFishCaught(Farmer farmer, Item fish)
         {
@@ -59,6 +60,15 @@ namespace QuestFramework.Core
         public void OnMonsterSlain(Farmer farmer, Monster monster)
         {
             MonsterSlain?.Invoke(this, new MonsterSlainEventArgs(farmer, monster));
+        }
+
+        public bool OnInteract(Farmer farmer, NPC npc, GameLocation location)
+        {
+            var args = new InteractEventArgs(farmer, npc, location);
+
+            Interact?.Invoke(this, args);
+
+            return args.IsSupressed;
         }
     }
 }

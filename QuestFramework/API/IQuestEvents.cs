@@ -12,5 +12,6 @@ namespace QuestFramework.API
         event EventHandler<JKScoreAchievedEventArgs> JKScoreAchieved;
         event EventHandler<MineFloorReachedEventArgs> MineFloorReached;
         event EventHandler<MonsterSlainEventArgs> MonsterSlain;
+        event EventHandler<InteractEventArgs> Interact;
     }
 }

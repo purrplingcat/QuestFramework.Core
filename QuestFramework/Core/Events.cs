@@ -24,4 +24,34 @@ namespace QuestFramework.Core.Events
     public record JKScoreAchievedEventArgs(Farmer Farmer, int Score);
     public record MineFloorReachedEventArgs(Farmer Farmer, int Floor);
     public record MonsterSlainEventArgs(Farmer Farmer, Monster Monster);
+    
+    public abstract class SupressableEvent
+    {
+        public bool IsSupressed { get; private set; }
+
+        public void Supress()
+        {
+            IsSupressed = true;
+        }
+    }
+
+    /// <summary>
+    /// When a farmer tries talk to an NPC, this cointains the information.
+    /// This event can be supressed and avoid trig the vanilla function of <see cref="NPC.checkAction(Farmer, GameLocation)"/>,
+    /// but mods may ignore the event supression, if they don't check the supression flag.
+    /// </summary>
+    public class InteractEventArgs : SupressableEvent
+    {
+        public InteractEventArgs(Farmer farmer, NPC npc, GameLocation location)
+        {
+            Farmer = farmer ?? throw new ArgumentNullException(nameof(farmer));
+            NPC = npc ?? throw new ArgumentNullException(nameof(npc));
+            Location = location ?? throw new ArgumentNullException(nameof(location));
+        }
+
+        public Farmer Farmer { get; }
+        public NPC NPC { get; }
+        public GameLocation Location { get; }
+        
+    }
 }
