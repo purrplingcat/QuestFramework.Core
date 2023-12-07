@@ -1,13 +1,13 @@
 ﻿using System.Reflection;
 using StardewValley;
 using StardewModdingAPI;
-using QuestFramework.API;
 using QuestFramework.Json;
 using QuestFramework.Core;
+using QuestFramework.Offering;
 
 namespace QuestFramework
 {
-    public class QuestCoreApi : IQuestApi
+    public class QuestCoreApi : IQuestCore
     {
         private static readonly Dictionary<string, QuestCoreApi> _apiCache = new();
 
@@ -20,6 +20,7 @@ namespace QuestFramework
 
         public IQuestEvents Events => QuestCoreMod.Events;
 
+        public INpcQuestOfferManager NpcQuestOffers => QuestCoreMod.NpcQuestManager;
         public IQuestManager? GetQuestManager()
         {
             return QuestManager.Current;

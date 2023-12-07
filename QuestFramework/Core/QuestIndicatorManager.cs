@@ -4,11 +4,6 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuestFramework.Core
 {
@@ -22,6 +17,27 @@ namespace QuestFramework.Core
         {
             _indicators = new(() => new());
             display.RenderedWorld += OnRenderedWorld;
+        }
+
+        public QuestIndicator GetIndicator(string name)
+        {
+            if (name is null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (!Indicators.TryGetValue(name, out var indicator))
+            {
+                indicator = new QuestIndicator();
+                Indicators[name] = indicator;
+            }
+
+            return indicator;
+        }
+
+        public QuestIndicator GetIndicator(NPC npc)
+        {
+            return GetIndicator(npc.Name);
         }
 
         private void OnRenderedWorld(object? sender, RenderedWorldEventArgs e)

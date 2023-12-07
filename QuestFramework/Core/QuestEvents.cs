@@ -1,7 +1,5 @@
 ﻿using StardewValley;
 using StardewValley.Monsters;
-
-using QuestFramework.API;
 using QuestFramework.Core.Events;
 
 namespace QuestFramework.Core
@@ -65,6 +63,10 @@ namespace QuestFramework.Core
         public bool OnInteract(Farmer farmer, NPC npc, GameLocation location)
         {
             var args = new InteractEventArgs(farmer, npc, location);
+
+            // TODO: This is not optimal. Create EventManager with event priorities and subscribe the Interact event
+            // and move this code to the listener with high priority
+            QuestCoreMod.NpcQuestManager.OnInteract(this, args);
 
             Interact?.Invoke(this, args);
 

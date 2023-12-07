@@ -14,6 +14,7 @@ using QuestFramework.Internal;
 using QuestFramework.Json;
 using QuestFramework.Patches;
 using QuestFramework.Menus;
+using QuestFramework.Offering;
 
 namespace QuestFramework
 {
@@ -37,6 +38,9 @@ namespace QuestFramework
         [AllowNull]
         internal static QuestIndicatorManager IndicatorManager { get; private set; }
 
+        [AllowNull]
+        internal static NpcQuestManager NpcQuestManager { get; private set; }
+
         public static QuestCoreConfig Config { get; private set; } = new();
 
         public override void Entry(IModHelper helper)
@@ -51,6 +55,7 @@ namespace QuestFramework
             Synchronizer = new QuestSynchronizer(this, QuestManager.Managers);
             SaveManager = new QuestSaveManager(_jsonSerializerSettings, helper.Data, ModManifest);
             IndicatorManager = new QuestIndicatorManager(helper.Events.Display);
+            NpcQuestManager = new NpcQuestManager(IndicatorManager);
             Events = new QuestEvents();
 
             HarmonyPatcher.Apply(this, new Patcher[] {
@@ -77,6 +82,7 @@ namespace QuestFramework
         private void OnDayEnding(object? sender, DayEndingEventArgs e)
         {
             _hold = true;
+            NpcQuestManager.ClearQuestOffers();
             QuestManager.Current?.Update();
             FakeOrder.Uninstall();
         }
@@ -100,16 +106,14 @@ namespace QuestFramework
                 {
                     if (npc == null || !npc.isVillager()) continue;
 
-                    npc.SetMark("test", (QuestMark)Game1.random.Next(1, Enum.GetValues(typeof(QuestMark)).Length));
+                    var marker = (QuestMark)Game1.random.Next(1, Enum.GetValues(typeof(QuestMark)).Length);
+                    NpcQuestManager.AddQuestOffer(npc.Name, new NpcQuestOffer("(Q)test", marker, npc.Name));
                 }
             }
 
             if (e.Button == SButton.F6)
             {
-                foreach (var indicator in IndicatorManager.Indicators.Values)
-                {
-                    indicator.Clear();
-                }
+                NpcQuestManager.ClearQuestOffers();
             }
         }
 
@@ -152,6 +156,7 @@ namespace QuestFramework
 
             FakeOrder.CleanUp();
             QuestManager.Managers.Clear();
+            NpcQuestManager.Reset();
             Monitor.Log("Quest Managers were uninitialized", LogLevel.Info);
         }
     }

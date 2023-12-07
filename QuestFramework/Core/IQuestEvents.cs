@@ -1,6 +1,6 @@
 ﻿using QuestFramework.Core.Events;
 
-namespace QuestFramework.API
+namespace QuestFramework.Core
 {
     public interface IQuestEvents
     {

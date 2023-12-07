@@ -1,6 +1,5 @@
 ﻿using Netcode;
 using StardewValley;
-using QuestFramework.API;
 using QuestFramework.Core.Model;
 using QuestFramework.Internal;
 
@@ -158,6 +157,41 @@ namespace QuestFramework.Core
             Quests.Add(quest);
         }
 
+        public bool CanStartQuestNow(string questId)
+        {
+            AssertQuestId(questId);
+
+            return CanStartQuestNow(QuestMetadata.Create(questId));
+        }
+
+        public bool CanStartQuestNow(QuestMetadata questMetadata)
+        {
+            if (!Providers.TryGetValue(questMetadata.TypeIdentifier, out var provider))
+            {
+                throw new QuestException($"No provider found for quest type identifier: {questMetadata.TypeIdentifier}");
+            }
+
+            return provider.CanStartQuestNow(questMetadata, Player);
+        }
+
+        private static void AssertQuestId(string questId)
+        {
+            if (string.IsNullOrWhiteSpace(questId))
+            {
+                throw new QuestCreationException(questId, "Quest ID can't be empty!");
+            }
+
+            if (questId.StartsWith("#"))
+            {
+                throw new QuestCreationException(questId, "ID prefix '#' is reserved for automatic generated quests.");
+            }
+
+            if (!Utils.IsQfQuestId(questId))
+            {
+                throw new QuestCreationException($"Quest id '{questId}' is not full qualified");
+            }
+        }
+
         public void RemoveQuest(string questId)
         {
             var quest = Quests.FirstOrDefault(q => q.Id == questId);
@@ -196,32 +230,9 @@ namespace QuestFramework.Core
 
         public static ICustomQuest? CreateQuest(string questId, int? seed = null)
         {
-            if (string.IsNullOrWhiteSpace(questId))
-            {
-                throw new QuestCreationException(questId, "Quest ID can't be empty!");
-            }
+            AssertQuestId(questId);
 
-            if (questId.StartsWith("#"))
-            {
-                throw new QuestCreationException(questId, "ID prefix '#' is reserved for automatic generated quests.");
-            }
-
-            if (Utils.IsQfQuestId(questId))
-            {
-                int splitIndex = questId.IndexOf(')');
-                string qualifier = questId[..(splitIndex + 1)];
-                QuestMetadata questMetadata = new()
-                {
-                    QualifiedId = questId,
-                    LocalId = questId.Replace(qualifier, ""),
-                    TypeIdentifier = qualifier[1..(qualifier.Length - 1)],
-                    Seed = seed ?? Game1.random.Next(),
-                };
-
-                return CreateQuest(questMetadata);
-            }
-
-            throw new QuestCreationException($"Quest id '{questId}' is not full quialified");
+            return CreateQuest(QuestMetadata.Create(questId, seed));
         }
 
         public static ICustomQuest? CreateQuest(QuestMetadata questMetadata)
