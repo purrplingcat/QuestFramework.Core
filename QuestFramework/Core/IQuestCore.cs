@@ -1,23 +1,32 @@
-﻿using QuestFramework.Offering;
-using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using StardewValley;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuestFramework.Core
 {
+    public enum QuestMark
+    {
+        None,
+        Default,
+        Exclamation,
+        ExclamationBlue,
+        ExclamationGreen,
+        ExclamationBig,
+        Question,
+        Arrow
+    }
+
     public interface IQuestCore
     {
-        public IQuestEvents Events { get; }
-        public INpcQuestOfferManager NpcQuestOffers { get; }
-        public IQuestManager? GetQuestManager();
-        public IQuestManager? GetQuestManager(Farmer player);
-        public IQuestManager? GetQuestManager(long playerId);
-        public void RegisterTypes(params Type[] types);
-        public void RegisterTypes(Assembly assembly);
-        public void RegisterQuestProvider(string token, IQuestProvider provider);
+        IQuestEvents Events { get; }
+        IQuestManager? GetQuestManager();
+        IQuestManager? GetQuestManager(Farmer player);
+        IQuestManager? GetQuestManager(long playerId);
+        void RegisterTypes(params Type[] types);
+        void RegisterTypes(Assembly assembly);
+        void RegisterQuestProvider(string token, IQuestProvider provider);
+        void StackQuest(string npcName, string questId, QuestMark marker, string? dialogueKey = null);
+        void StackQuest(NPC npc, string questId, QuestMark marker, string? dialogueKey = null);
+        void OfferQuestNow(NPC npc, Farmer player);
+        void OfferQuestNow(string npcName, Farmer player);
     }
 }

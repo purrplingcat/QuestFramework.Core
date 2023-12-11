@@ -6,7 +6,7 @@ using StardewValley;
 
 namespace QuestFramework.Offering
 {
-    public class NpcQuestManager : INpcQuestOfferManager
+    internal class NpcQuestManager
     {
         private readonly PerScreen<Dictionary<string, Stack<NpcQuestOffer>>> _questOffers;
         private readonly QuestIndicatorManager indicatorManager;

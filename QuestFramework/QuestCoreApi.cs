@@ -4,6 +4,7 @@ using StardewModdingAPI;
 using QuestFramework.Json;
 using QuestFramework.Core;
 using QuestFramework.Offering;
+using QuestFramework.Internal;
 
 namespace QuestFramework
 {
@@ -20,7 +21,7 @@ namespace QuestFramework
 
         public IQuestEvents Events => QuestCoreMod.Events;
 
-        public INpcQuestOfferManager NpcQuestOffers => QuestCoreMod.NpcQuestManager;
+        internal NpcQuestManager NpcQuestOffers => QuestCoreMod.NpcQuestManager;
         public IQuestManager? GetQuestManager()
         {
             return QuestManager.Current;
@@ -62,6 +63,49 @@ namespace QuestFramework
             }
 
             return api;
+        }
+
+        public void ClearQuestStack()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearQuestStack(string npcName)
+        {
+            NpcQuestOffers.ClearQuestOffers(npcName);
+        }
+
+        public void OfferQuestNow(NPC npc, Farmer player)
+        {
+            NpcQuestOffers.OfferQuestToPlayer(npc, player);
+        }
+
+        public void StackQuest(string npcName, string questId, QuestMark marker, string? dialogueKey = null)
+        {
+            NpcQuestOffers.AddQuestOffer(npcName, new NpcQuestOffer(questId, marker, npcName, dialogueKey));
+        }
+
+        public void StackQuest(NPC npc, string questId, QuestMark marker, string? dialogueKey = null)
+        {
+            StackQuest(npc.Name, questId, marker, dialogueKey);
+        }
+
+        public void ClearQuestStack(NPC npc)
+        {
+            NpcQuestOffers.ClearQuestOffers(npc.Name);
+        }
+
+        public void OfferQuestNow(string npcName, Farmer player)
+        {
+            NPC npc = Game1.getCharacterFromName(npcName);
+
+            if (npc != null)
+            {
+                OfferQuestNow(npc, player);
+                return;
+            }
+
+            Logger.Warn($"[{ModManifest.Name}] Unable to offer a quest: No NPC '{npcName}' was found.");
         }
     }
 }

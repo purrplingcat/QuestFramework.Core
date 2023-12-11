@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace QuestFramework.Offering
 {
-    public record NpcQuestOffer
+    internal record NpcQuestOffer
     {
         public string QuestId { get; init; }
         public QuestMark IndicatorType { get; init; }

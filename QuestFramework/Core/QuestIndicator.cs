@@ -2,18 +2,6 @@
 
 namespace QuestFramework.Core
 {
-    public enum QuestMark
-    {
-        None,
-        Default,
-        Exclamation,
-        ExclamationBlue,
-        ExclamationGreen,
-        ExclamationBig,
-        Question,
-        Arrow
-    }
-
     public class QuestIndicator
     {
         protected readonly Dictionary<string, QuestMark> sources = new();
