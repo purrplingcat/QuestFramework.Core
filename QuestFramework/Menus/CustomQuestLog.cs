@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using QuestFramework.API;
 using QuestFramework.Extensions;
-using QuestFramework.Core;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -13,19 +11,84 @@ using QuestFramework.Internal;
 
 namespace QuestFramework.Menus
 {
-    internal class CustomQuestLog : QuestLog, IQuestMenu
+    public class CustomQuestLog : QuestLog
     {
+        private class PriorityComparer : IComparer<int>
+        {
+            public int Compare(int x, int y)
+            {
+                // Sestupně řazení
+                return y.CompareTo(x);
+            }
+        }
+
+        private static readonly Dictionary<IRendererSelector, Func<IQuestRenderer>> _rendererMap = new Dictionary<IRendererSelector, Func<IQuestRenderer>>();
+        private readonly IQuestRenderer _defaultRenderer = new DefaultQuestRenderer();
+        private IQuestRenderer? _renderer;
         private IQuest? _previousQuest;
-        protected IList<IQuestObjective> _objectives = new List<IQuestObjective>();
+
+        public CustomQuestLog()
+        {
+            Renderers = _rendererMap.ToDictionary(p => p.Key, p => p.Value());
+            SortedSelectors = new SortedList<int, IRendererSelector>(
+                CreateSortedSelectors(_rendererMap.Keys),
+                new PriorityComparer());
+        }
+
+        public CustomQuestLog(Dictionary<IRendererSelector, IQuestRenderer> renderers)
+        {
+            Renderers = renderers;
+            SortedSelectors = new SortedList<int, IRendererSelector>(
+                CreateSortedSelectors(renderers.Keys),
+                new PriorityComparer());
+        }
 
         private static IReflectionHelper Reflection => QuestCoreMod.Reflection;
-        public static Dictionary<Type, IQuestRenderer> Renderers { get; } = new();
 
-        private IQuestRenderer? _renderer;
+        public List<List<IQuest>> Pages => pages;
+        
+        public int CurrentPage => currentPage;
+        
+        public float ContentHeight
+        {
+            get => _contentHeight; 
+            set => _contentHeight = value;
+        }
+
+        public float ScissorRectHeight
+        {
+            get => _scissorRectHeight; 
+            set => _scissorRectHeight = value;
+        }
+        
+        protected Dictionary<IRendererSelector, IQuestRenderer> Renderers { get; }
+
+        protected SortedList<int, IRendererSelector> SortedSelectors { get; }
 
         private string HoverText => Reflection
             .GetField<string>(this, "hoverText")
             .GetValue();
+
+        public static void RegisterRenderer(IRendererSelector selector, Func<IQuestRenderer> rendererFactory)
+        {
+            _rendererMap[selector] = rendererFactory;
+        }
+
+        protected virtual IQuestRenderer? ChooseRenderer(IQuest quest)
+        {
+            foreach (var entry in SortedSelectors)
+            {
+                var selector = entry.Value;
+                var renderer = Renderers[selector];
+
+                if (selector.ShouldUseRenderer(quest))
+                {
+                    return renderer;
+                }
+            }
+
+            return null;
+        }
 
         protected override IList<IQuest> GetAllQuests()
         {
@@ -62,34 +125,40 @@ namespace QuestFramework.Menus
             if (_shownQuest != _previousQuest)
             {
                 _previousQuest = _shownQuest;
+                _renderer?.Cleanup();
                 _renderer = null;
-                _objectives = _shownQuest is IHaveObjectives haveObjectives
-                    ? haveObjectives.GetObjectives()
-                    : new List<IQuestObjective>();
 
-                if (Renderers.TryGetValue(_shownQuest.GetType(), out var renderer))
+                if (_shownQuest != null)
                 {
-                    _renderer = renderer;
+                    _renderer = ChooseRenderer(_shownQuest) ?? _defaultRenderer;
+                    _renderer.Initialize(_shownQuest, this);
                 }
             }
+        }
+
+        protected override void cleanupBeforeExit()
+        {
+            _renderer?.Cleanup();
+            base.cleanupBeforeExit();
         }
 
         public override void update(GameTime time)
         {
             base.update(time);
+            _renderer?.Update(time);
             UpdateInternal();
         }
 
         public override void draw(SpriteBatch b)
         {
-            if (questPage == -1 || _shownQuest is not ICustomQuest quest || _renderer == null)
+            if (questPage == -1 || _renderer == null)
             {
                 base.draw(b);
                 return;
             }
 
             DrawEarly(b);
-            _renderer.Draw(b, quest, this);
+            _renderer.Draw(b);
             DrawLate(b);
         }
 
@@ -128,7 +197,7 @@ namespace QuestFramework.Menus
             drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), xPositionOnScreen, yPositionOnScreen, width, height, Color.White, 4f);
         }
 
-        public static void HookOnQuestLog(IDisplayEvents events)
+        internal static void HookOnQuestLog(IDisplayEvents events)
         {
             events.MenuChanged += (_, e) =>
             {
@@ -141,17 +210,17 @@ namespace QuestFramework.Menus
             };
         }
 
+        private static Dictionary<int, IRendererSelector> CreateSortedSelectors(IEnumerable<IRendererSelector> selectors)
+        {
+            return selectors.ToDictionary(s => s.Priority, s => s);
+        }
+
         public IQuest? GetCurrentQuest()
         {
             if (questPage != -1)
                 return _shownQuest;
 
             return null;
-        }
-
-        public IList<IQuestObjective> GetCurrentObjectives()
-        {
-            return _objectives;
         }
     }
 }
