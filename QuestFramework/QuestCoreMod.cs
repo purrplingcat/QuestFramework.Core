@@ -49,6 +49,7 @@ namespace QuestFramework
 
             JsonTypesManager.RegisterTypesFromAssembly(GetType().Assembly);
             EventCommands.RegisterCommands(ModManifest.UniqueID);
+            Queries.Register();
 
             Reflection = helper.Reflection;
             Config = helper.ReadConfig<QuestCoreConfig>();
